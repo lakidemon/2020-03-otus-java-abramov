@@ -56,10 +56,10 @@ public class DIYArrayList<E> implements List<E> {
         Objects.checkIndex(i, actualSize);
         adjustArraySize();
         E oldVal = set(i, e);
+        actualSize++;
         for (int shiftIndex = i + 1; shiftIndex < actualSize; shiftIndex++) {
             oldVal = set(shiftIndex, oldVal);
         }
-        actualSize++;
     }
 
     @Override
@@ -67,11 +67,12 @@ public class DIYArrayList<E> implements List<E> {
         Objects.checkIndex(i, actualSize);
         E value = (E) content[i];
         if (actualSize > 1) {
-            for (int shiftIndex = i; shiftIndex < actualSize; shiftIndex++) {
+            for (int shiftIndex = i; shiftIndex < actualSize - 1; shiftIndex++) {
                 content[shiftIndex] = content[shiftIndex + 1];
             }
-            actualSize--;
+            content[actualSize - 1] = null;
         }
+        actualSize--;
         adjustArraySize();
         return value;
     }
@@ -83,12 +84,12 @@ public class DIYArrayList<E> implements List<E> {
             newSize = actualSize + GROW_STEP;
         } else if (content.length / 2 > actualSize) {
             newSize = content.length / 2;
-        } else if (actualSize == 0) {
+        } else if (actualSize == 0 && content.length != 0) {
             newSize = 0;
         }
 
         if (newSize >= 0) {
-            content = Arrays.copyOf(content, newSize);
+            content = newSize == 0 ? new Object[0] : Arrays.copyOf(content, newSize);
         }
     }
 
