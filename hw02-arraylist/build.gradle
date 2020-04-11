@@ -13,4 +13,5 @@ repositories {
 }
 
 dependencies {
+    testImplementation 'com.google.guava:guava-testlib:28.2-jre'
 }

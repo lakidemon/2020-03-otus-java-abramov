@@ -15,6 +15,10 @@ public class DIYArrayList<E> implements List<E> {
         content = new Object[capacity];
     }
 
+    public DIYArrayList(E... elements) {
+        this(Arrays.asList(elements));
+    }
+
     public DIYArrayList(Collection<E> copy) {
         this(copy.size());
         addAll(copy);
@@ -53,10 +57,10 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public void add(int i, E e) {
-        Objects.checkIndex(i, actualSize);
+        Objects.checkIndex(i, actualSize + 1);
         adjustArraySize();
-        E oldVal = set(i, e);
         actualSize++;
+        E oldVal = set(i, e);
         for (int shiftIndex = i + 1; shiftIndex < actualSize; shiftIndex++) {
             oldVal = set(shiftIndex, oldVal);
         }
@@ -66,11 +70,11 @@ public class DIYArrayList<E> implements List<E> {
     public E remove(int i) {
         Objects.checkIndex(i, actualSize);
         E value = (E) content[i];
+        content[i] = null;
         if (actualSize > 1) {
             for (int shiftIndex = i; shiftIndex < actualSize - 1; shiftIndex++) {
                 content[shiftIndex] = content[shiftIndex + 1];
             }
-            content[actualSize - 1] = null;
         }
         actualSize--;
         adjustArraySize();
@@ -84,8 +88,6 @@ public class DIYArrayList<E> implements List<E> {
             newSize = actualSize + GROW_STEP;
         } else if (content.length / 2 > actualSize) {
             newSize = content.length / 2;
-        } else if (actualSize == 0 && content.length != 0) {
-            newSize = 0;
         }
 
         if (newSize >= 0) {
@@ -119,15 +121,6 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     @Override
-    public void sort(Comparator<? super E> c) {
-        if (actualSize > 0) {
-            var newArray = Arrays.copyOf(content, actualSize);
-            Arrays.sort(newArray, (Comparator) c);
-            content = newArray;
-        }
-    }
-
-    @Override
     public Iterator<E> iterator() {
         return listIterator();
     }
@@ -140,19 +133,33 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public String toString() {
-        return Arrays.toString(content);
+        if (isEmpty()) {
+            return "[]";
+        }
+        StringBuilder builder = new StringBuilder("[");
+        Iterator<E> iterator = iterator();
+        while (iterator.hasNext()) {
+            builder.append(iterator.next());
+            if (iterator.hasNext())
+                builder.append(", ");
+        }
+        builder.append(']');
+        return builder.toString();
     }
 
     @Override
     public boolean addAll(Collection<? extends E> collection) {
-        int newSize = collection.size() + actualSize;
-        if (newSize > this.content.length) {
-            content = Arrays.copyOf(this.content, newSize);
+        if (!collection.isEmpty()) {
+            int newSize = collection.size() + actualSize;
+            if (newSize > this.content.length) {
+                content = Arrays.copyOf(this.content, newSize);
+            }
+            for (E e : collection) {
+                content[actualSize++] = e;
+            }
+            return true;
         }
-        for (E e : collection) {
-            content[actualSize++] = e;
-        }
-        return true;
+        return false;
     }
 
     @Override
@@ -162,17 +169,21 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator(int i) {
+        Objects.checkIndex(i, actualSize + 1);
         return new ListIterator<>() {
-            int currentIndex = 0;
+            int currentIndex = i;
+            int lastIndex = -1;
 
             @Override
             public boolean hasNext() {
-                return currentIndex < actualSize;
+                return currentIndex != actualSize;
             }
 
             @Override
             public E next() {
-                if (!hasNext()) throw new NoSuchElementException();
+                if (!hasNext())
+                    throw new NoSuchElementException();
+                lastIndex = currentIndex;
                 return (E) content[currentIndex++];
             }
 
@@ -183,13 +194,19 @@ public class DIYArrayList<E> implements List<E> {
 
             @Override
             public E previous() {
-                if (!hasPrevious()) throw new NoSuchElementException();
-                return (E) content[--currentIndex];
+                if (!hasPrevious())
+                    throw new NoSuchElementException();
+                int i = currentIndex - 1;
+                if (i < 0) {
+                    throw new NoSuchElementException();
+                }
+                currentIndex = lastIndex = i;
+                return (E) content[currentIndex];
             }
 
             @Override
             public int nextIndex() {
-                return Math.min(currentIndex + 1, actualSize);
+                return currentIndex;
             }
 
             @Override
@@ -199,26 +216,50 @@ public class DIYArrayList<E> implements List<E> {
 
             @Override
             public void remove() {
-                DIYArrayList.this.remove(--currentIndex);
+                if (lastIndex == -1)
+                    throw new IllegalStateException();
+                DIYArrayList.this.remove(lastIndex);
+                currentIndex = lastIndex;
+                lastIndex = -1;
             }
 
             @Override
             public void set(E e) {
-                DIYArrayList.this.set(currentIndex - 1, e);
+                if (lastIndex == -1)
+                    throw new IllegalStateException();
+                DIYArrayList.this.set(lastIndex, e);
             }
 
             @Override
             public void add(E e) {
-                DIYArrayList.this.add(currentIndex - 1, e);
+                DIYArrayList.this.add(currentIndex++, e);
+                lastIndex = -1;
             }
         };
+    }
+
+    @Override
+    public Object[] toArray() {
+        return Arrays.copyOf(content, actualSize);
+    }
+
+    @Override
+    public <T> T[] toArray(T[] ts) {
+        if (ts.length < actualSize) {
+            return (T[]) Arrays.copyOf(content, actualSize);
+        } else {
+            System.arraycopy(content, 0, ts, 0, actualSize);
+            if (ts.length > actualSize) {
+                ts[actualSize] = null;
+            }
+            return ts;
+        }
     }
 
     @Override
     public List<E> subList(int i, int i1) {
         throw new UnsupportedOperationException();
     }
-
 
     @Override
     public boolean addAll(int i, Collection<? extends E> collection) {
@@ -237,17 +278,6 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    @Override
-    public Object[] toArray() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T> T[] toArray(T[] ts) {
         throw new UnsupportedOperationException();
     }
 
