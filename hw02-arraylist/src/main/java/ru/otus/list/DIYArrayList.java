@@ -1,9 +1,12 @@
+package ru.otus.list;
+
 import java.util.*;
 
 public class DIYArrayList<E> implements List<E> {
     private static final int INIT_CAPACITY = 20;
     private static final int GROW_STEP = 10;
 
+    private int defaultCapacity;
     private Object[] content;
     private int actualSize = 0;
 
@@ -12,6 +15,7 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     public DIYArrayList(int capacity) {
+        defaultCapacity = capacity;
         content = new Object[capacity];
     }
 
@@ -20,7 +24,7 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     public DIYArrayList(Collection<E> copy) {
-        this(copy.size());
+        this(copy.size() > 0 ? copy.size() : INIT_CAPACITY);
         addAll(copy);
     }
 
@@ -77,21 +81,20 @@ public class DIYArrayList<E> implements List<E> {
             }
         }
         actualSize--;
-        adjustArraySize();
         return value;
     }
 
     private void adjustArraySize() {
         int newSize = -1;
 
-        if (content.length == actualSize) {
+        if (content.length == 0) {
+            newSize = defaultCapacity;
+        } else if (content.length == actualSize) {
             newSize = actualSize + GROW_STEP;
-        } else if (content.length / 2 > actualSize) {
-            newSize = content.length / 2;
         }
 
-        if (newSize >= 0) {
-            content = newSize == 0 ? new Object[0] : Arrays.copyOf(content, newSize);
+        if (newSize > 0) {
+            content = Arrays.copyOf(content, newSize);
         }
     }
 
@@ -196,11 +199,7 @@ public class DIYArrayList<E> implements List<E> {
             public E previous() {
                 if (!hasPrevious())
                     throw new NoSuchElementException();
-                int i = currentIndex - 1;
-                if (i < 0) {
-                    throw new NoSuchElementException();
-                }
-                currentIndex = lastIndex = i;
+                lastIndex = --currentIndex;
                 return (E) content[currentIndex];
             }
 
