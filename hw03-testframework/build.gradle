@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.otus'
+version '1.0'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation group: 'org.assertj', name: 'assertj-core'
+}
