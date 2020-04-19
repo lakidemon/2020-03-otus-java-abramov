@@ -1,3 +1,5 @@
+package ru.otus.testing;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

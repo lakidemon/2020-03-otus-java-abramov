@@ -1,4 +1,7 @@
+package ru.otus.testing;
+
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
+@Getter
 public class TestCase {
     private Class<?> testClass;
     private List<Method> before;
@@ -20,15 +24,20 @@ public class TestCase {
             throw new RuntimeException("Cannot instantiate object", e);
         }
 
-        String name = testClass.getName() + "_" + test.getName();
         try {
             runMethods(instance, before);
             runMethod(instance, test);
             runMethods(instance, after);
-            return new TestResult(name, null);
-        } catch (Exception | AssertionError e) {
-            return new TestResult(name, e);
+            return new TestResult(getTestName(), null);
+        } catch (AssertionError | IllegalAccessException e) {
+            return new TestResult(getTestName(), e);
+        } catch (InvocationTargetException e) {
+            return new TestResult(getTestName(), e.getTargetException());
         }
+    }
+
+    public String getTestName() {
+        return test.getName();
     }
 
     private void runMethod(Object instance, Method method) throws InvocationTargetException, IllegalAccessException {

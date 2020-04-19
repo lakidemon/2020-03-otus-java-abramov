@@ -1,8 +1,10 @@
-import annotations.After;
-import annotations.Before;
-import annotations.Test;
+package ru.otus.testing;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import ru.otus.testing.annotations.After;
+import ru.otus.testing.annotations.Before;
+import ru.otus.testing.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -38,15 +40,30 @@ public class TestsContainer {
         }
     }
 
-    public List<TestResult> startTests() {
+    public List<TestResult> startTests(TestProgress progressHandler) {
         if (tests.isEmpty()) {
             throw new IllegalStateException("No tests to run");
         }
 
         var results = new ArrayList<TestResult>();
         for (TestCase test : tests) {
-            results.add(test.runTest());
+            if (progressHandler != null) {
+                progressHandler.onTestBegin(test);
+            }
+            TestResult result = test.runTest();
+            results.add(result);
+            if (progressHandler != null) {
+                progressHandler.onTestFinish(result);
+            }
         }
         return results;
+    }
+
+    public interface TestProgress {
+
+        void onTestBegin(TestCase test);
+
+        void onTestFinish(TestResult result);
+
     }
 }

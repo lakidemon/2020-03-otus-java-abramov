@@ -37,7 +37,7 @@ allprojects {
     dependencyManagement {
         dependencies {
             dependency "com.google.guava:guava:${Deps.guava}"
-            dependency "org.assertj:assertj-core:${Deps.assertJ}"
+            dependency "org.junit.jupiter:junit-jupiter:${Deps.junit}"
         }
     }
 }
