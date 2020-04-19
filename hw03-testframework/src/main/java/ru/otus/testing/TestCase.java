@@ -24,16 +24,25 @@ public class TestCase {
             throw new RuntimeException("Cannot instantiate object", e);
         }
 
+        String name = getTestName();
+        Throwable failure = null;
+        long deltaTime = 0;
         try {
             runMethods(instance, before);
-            runMethod(instance, test);
+            long start = System.currentTimeMillis();
+            try {
+                runMethod(instance, test);
+            } finally {
+                deltaTime = System.currentTimeMillis() - start;
+            }
             runMethods(instance, after);
-            return new TestResult(getTestName(), null);
         } catch (AssertionError | IllegalAccessException e) {
-            return new TestResult(getTestName(), e);
+            failure = e;
         } catch (InvocationTargetException e) {
-            return new TestResult(getTestName(), e.getTargetException());
+            failure = e.getTargetException();
         }
+
+        return new TestResult(name, deltaTime, failure);
     }
 
     public String getTestName() {

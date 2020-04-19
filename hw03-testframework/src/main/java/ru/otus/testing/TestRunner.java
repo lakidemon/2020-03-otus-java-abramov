@@ -22,9 +22,11 @@ public class TestRunner {
             public void onTestFinish(TestResult result) {
                 if (result.isSucceed()) {
                     System.out.print("\r   [P] " + result.getTestName());
+                    System.out.print(" " + result.getRunningTime() + "ms.");
                     System.out.println();
                 } else {
                     System.out.print("\r   [F] " + result.getTestName());
+                    System.out.print(" " + result.getRunningTime() + "ms.");
                     System.out.println();
                     result.getFailure()
                             .printStackTrace(IndentationPrintStream.ERR); // при запуске из идеи коряво отображается
@@ -42,9 +44,13 @@ public class TestRunner {
         }
 
         System.out.println("Complete:");
-        System.out.println("   Passed: " + pass);
-        System.out.println("   Failed: " + fail);
+        System.out.println("   Passed: " + pass + " (" + percentage(pass, result.size()) + ")");
+        System.out.println("   Failed: " + fail + " (" + percentage(fail, result.size()) + ")");
         System.out.println("   Total: " + result.size());
+    }
+
+    private static String percentage(double amount, double total) {
+        return ((int) ((amount / total) * 100D)) + "%";
     }
 
     private static class IndentationPrintStream extends PrintStream {

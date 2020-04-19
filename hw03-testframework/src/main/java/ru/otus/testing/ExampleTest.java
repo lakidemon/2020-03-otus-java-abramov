@@ -25,7 +25,7 @@ public class ExampleTest {
 
     @Test
     void longSuccessfulTest() throws InterruptedException {
-        Thread.sleep(5000l);
+        Thread.sleep(2000l);
     }
 
     @Test
@@ -36,6 +36,11 @@ public class ExampleTest {
     @Test
     void testThatThrowsException() {
         sharedData.get(5);
+    }
+
+    @Test
+    void testThatThrowsException2() throws Throwable {
+        throw new Throwable("Test");
     }
 
     @After
