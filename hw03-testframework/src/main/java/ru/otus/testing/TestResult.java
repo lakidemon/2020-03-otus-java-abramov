@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class TestResult {
     private String testName;
-    private long runningTime;
+    private long runningTimeInMillis;
     private Throwable failure;
 
     public boolean isSucceed() {
