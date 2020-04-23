@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "io.freefair.gradle:lombok-plugin:5.0.0"
+    }
+}
+
 plugins {
     id 'idea'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
@@ -22,9 +33,11 @@ allprojects {
     }
 
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'io.freefair.lombok'
     dependencyManagement {
         dependencies {
             dependency "com.google.guava:guava:${Deps.guava}"
+            dependency "org.junit.jupiter:junit-jupiter:${Deps.junit}"
         }
     }
 }
