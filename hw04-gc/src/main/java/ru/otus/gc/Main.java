@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 
 import javax.management.NotificationEmitter;
 import javax.management.NotificationListener;
+import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,23 +17,31 @@ public class Main {
     static final String GC = getGCName();
     static final long HEAP_SIZE = getHeapSize();
     static final PrintStream LOGGER = !GC.equals("Epsilon") ? createOutput(GC + "-" + HEAP_SIZE + "MB") : null;
-    static final int AMOUNT = 29_000; // 1_600 | 7_000 | 29_000
-
-    // Epsilon:
-    // 296 | 306 | 305
+    static final int SIZE = 160_000; // 10_000 | 160_000
+    static long START_TIME;
+    static Stat STATS = new Stat();
 
     public static void main(String[] args) throws Exception {
         System.out.println("GC: " + GC);
         collectGCStats();
+        var mf = ManagementFactory.getPlatformMBeanServer();
+        var objectName = new ObjectName("ru.otus.gc:type=Stat");
+        mf.registerMBean(STATS, objectName);
+
+        START_TIME = System.currentTimeMillis();
         var list = new LinkedList<>();
         while (true) {
-            for (var i = 0; i < AMOUNT; i++) {
-                list.add(new Long(i));
+            for (var i = 0; i < 4; i++) {
+                list.add(new Object[SIZE]);
             }
             Thread.sleep(100L);
-            for (var i = 0; i < AMOUNT / 2; i++) {
+            for (var i = 0; i < 2; i++) {
                 list.removeFirst();
             }
+
+            STATS.incrementIterations();
+            STATS.setElapsedTime(System.currentTimeMillis() - START_TIME);
+            STATS.setMemoryPercent(getHeapPercentage());
         }
     }
 
@@ -78,10 +87,19 @@ public class Main {
 
     @SneakyThrows
     private static void log(String action, long duration) {
-        LOGGER.println(String.join(",", action, String.valueOf(duration)));
+        LOGGER.println(String.join(",", String.valueOf(STATS.getIterations()), String.valueOf(STATS.getElapsedTime()),
+                String.valueOf(STATS.getMemoryPercent()), action, String.valueOf(duration)));
+    }
+
+    private static int getHeapPercentage() {
+        return (int) ((getUsedHeapSize() / (double) HEAP_SIZE) * 100D);
+    }
+
+    private static long getUsedHeapSize() {
+        return ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1024L / 1024L;
     }
 
     private static long getHeapSize() {
-        return ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / 1024 / 1024;
+        return ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / 1024L / 1024L;
     }
 }
