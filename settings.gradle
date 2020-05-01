@@ -3,3 +3,4 @@ include 'hw01-gradle'
 include 'hw02-arraylist'
 include 'hw03-testframework'
 
+include 'hw05-logger'
