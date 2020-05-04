@@ -1,15 +1,21 @@
+package ru.otus.logger;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
+import ru.otus.logger.object.AdvancedFinancesHandler;
+import ru.otus.logger.object.FinancesHandler;
 import ru.otus.logger.object.LoggableHandler;
+import ru.otus.logger.proxy.ConstructorParams;
 import ru.otus.logger.proxy.HandlerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +28,7 @@ public class ProxyLoggerTest {
 
     @BeforeEach
     void prepare() {
-        handler = HandlerFactory.createFinancesHandler();
+        handler = HandlerFactory.createLoggableHandler(FinancesHandler.class);
         buffer = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(buffer));
@@ -62,6 +68,14 @@ public class ProxyLoggerTest {
 
         var result = buffer.toString();
         assertEquals("User: Somebody, loss: 200" + System.lineSeparator(), result, result);
+    }
+
+    @Test
+    @DisplayName("должен успешно создать прокси для класса с конструктором с аргументами")
+    void shouldCreateProxyForObjectsWithNonDefaultConstructor() {
+        assertDoesNotThrow(() -> HandlerFactory.createLoggableHandler(AdvancedFinancesHandler.class,
+                new ConstructorParams(new Class[] { String.class, BigDecimal.class },
+                        new Object[] { "StringValue", BigDecimal.TEN })));
     }
 
     @AfterEach
