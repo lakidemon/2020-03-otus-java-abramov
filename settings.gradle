@@ -3,5 +3,6 @@ include 'hw01-gradle'
 include 'hw02-arraylist'
 include 'hw03-testframework'
 include 'hw04-gc'
-
 include 'hw05-logger'
+include 'hw06-atm'
+
