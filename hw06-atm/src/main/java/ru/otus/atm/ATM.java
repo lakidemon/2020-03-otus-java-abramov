@@ -43,7 +43,7 @@ public class ATM {
             int available = cellMap.compute(banknote, (k, v) -> v - 1);
             takenMap.compute(banknote, (k, v) -> (v == null) ? 1 : v + 1);
             if (available == 0) {
-                sortedValues.remove(banknote);
+                sortedValues.remove((Integer) banknote);
             }
         }
 
@@ -53,7 +53,7 @@ public class ATM {
 
     public static ATM atmForRubles() {
         var banknotes = new HashMap<Integer, Integer>();
-        banknotes.put(10, 0); // будет пустая ячейка
+        banknotes.put(10, 50);
         banknotes.put(50, 100);
         banknotes.put(100, 50);
         banknotes.put(200, 50);
