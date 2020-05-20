@@ -1,8 +1,12 @@
 package ru.otus.atm;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.otus.atm.banknote.Banknote;
+import ru.otus.atm.banknote.Ruble;
 import ru.otus.atm.cell.StandardCellRepository;
 import ru.otus.atm.exceptions.IllegalBanknoteException;
 import ru.otus.atm.exceptions.InvalidTakeAmountException;
@@ -60,13 +64,14 @@ public class ATMTest {
     @DisplayName("должен падать при обращении к ячейке, которой нет")
     void shouldFailIfTryingToAccessCellWhichDoesNotExist() {
         StandardCellRepository repository = new StandardCellRepository(new HashMap<>() {{
-            put(10, 0);
-            put(50, 0);
+            put(Ruble._10, 0);
+            put(Ruble._50, 0);
         }});
-        assertThrows(IllegalBanknoteException.class, () -> repository.setAmount(5, 1));
-        assertThrows(IllegalBanknoteException.class, () -> repository.getAmount(5));
-        assertDoesNotThrow(() -> repository.getAmount(10));
-        assertDoesNotThrow(() -> repository.setAmount(10, 1));
+        var unsupportedOrFake = new Dollar(5);
+        assertThrows(IllegalBanknoteException.class, () -> repository.setAmount(unsupportedOrFake, 1));
+        assertThrows(IllegalBanknoteException.class, () -> repository.getAmount(unsupportedOrFake));
+        assertDoesNotThrow(() -> repository.getAmount(Ruble._10));
+        assertDoesNotThrow(() -> repository.setAmount(Ruble._10, 1));
     }
 
     @Test
@@ -75,7 +80,13 @@ public class ATMTest {
         assertEquals(160_500, atm.getCurrentSum());
     }
 
-    int sumMap(Map<Integer, Integer> map) {
-        return map.entrySet().stream().mapToInt(entry -> entry.getKey() * entry.getValue()).sum();
+    int sumMap(Map<Banknote, Integer> map) {
+        return map.entrySet().stream().mapToInt(entry -> entry.getKey().toMoney(entry.getValue())).sum();
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    private class Dollar implements Banknote {
+        private final int value;
     }
 }

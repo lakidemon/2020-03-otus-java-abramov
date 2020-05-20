@@ -1,6 +1,8 @@
 package ru.otus.atm;
 
 import lombok.RequiredArgsConstructor;
+import ru.otus.atm.banknote.Banknote;
+import ru.otus.atm.banknote.Ruble;
 import ru.otus.atm.cell.CellRepository;
 import ru.otus.atm.cell.StandardCellRepository;
 import ru.otus.atm.exceptions.InvalidTakeAmountException;
@@ -8,6 +10,7 @@ import ru.otus.atm.exceptions.NegativeAmountException;
 import ru.otus.atm.exceptions.NotEnoughBanknotesException;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -18,62 +21,64 @@ public class ATM {
         return cellRepository.getSum();
     }
 
-    public Map<Integer, Integer> takeMoney(int sum) throws InvalidTakeAmountException, NegativeAmountException {
+    public Map<Banknote, Integer> takeMoney(int sum) throws InvalidTakeAmountException, NegativeAmountException {
         if (sum <= 0) {
             throw new NegativeAmountException(sum);
         }
-        var cellMap = new HashMap<>(cellRepository.getCellsContent());
-        var takenMap = new HashMap<Integer, Integer>();
-        var sortedValues = cellMap.entrySet()
+        var takenMap = new HashMap<Banknote, Integer>();
+        var sortedValues = cellRepository.getCellsContent()
+                .entrySet()
                 .stream()
                 .filter(e -> e.getValue() > 0)
                 .map(Map.Entry::getKey)
-                .sorted(Comparator.comparingInt(Integer::intValue).reversed())
                 .collect(Collectors.toList());
 
-        int remaining = sum;
+        var remaining = sum;
         while (remaining > 0) {
             if (sortedValues.isEmpty()) {
                 throw new NotEnoughBanknotesException(sum);
             }
-            int banknote = closest(sortedValues, remaining);
-            if (banknote == -1)
+            var banknote = closest(sortedValues, remaining).orElse(null);
+            if (banknote == null) {
                 throw new InvalidTakeAmountException(sum, remaining);
-            remaining -= banknote;
-            int available = cellMap.compute(banknote, (k, v) -> v - 1);
-            takenMap.compute(banknote, (k, v) -> (v == null) ? 1 : v + 1);
-            if (available == 0) {
-                sortedValues.remove((Integer) banknote);
+            }
+            remaining -= banknote.getValue();
+
+            var taken = takenMap.compute(banknote, INCREMENT_OR_1);
+            if (cellRepository.getAmount(banknote) == taken) {
+                sortedValues.remove(banknote);
             }
         }
 
-        cellMap.forEach(cellRepository::setAmount);
+        takenMap.forEach(cellRepository::take);
         return takenMap;
     }
 
     public static ATM atmForRubles() {
-        var banknotes = new HashMap<Integer, Integer>();
-        banknotes.put(10, 50);
-        banknotes.put(50, 100);
-        banknotes.put(100, 50);
-        banknotes.put(200, 50);
-        banknotes.put(500, 50);
-        banknotes.put(1000, 25);
-        banknotes.put(2000, 20);
-        banknotes.put(5000, 10);
+        var banknotes = new HashMap<Banknote, Integer>();
+        banknotes.put(Ruble._10, 50);
+        banknotes.put(Ruble._50, 100);
+        banknotes.put(Ruble._100, 50);
+        banknotes.put(Ruble._200, 50);
+        banknotes.put(Ruble._500, 50);
+        banknotes.put(Ruble._1000, 25);
+        banknotes.put(Ruble._2000, 20);
+        banknotes.put(Ruble._5000, 10);
         return standardATM(banknotes);
     }
 
-    public static ATM standardATM(Map<Integer, Integer> banknotes) {
+    public static ATM standardATM(Map<Banknote, Integer> banknotes) {
         return new ATM(new StandardCellRepository(banknotes));
     }
 
-    private static int closest(List<Integer> sortedValues, int number) {
-        for (int value : sortedValues) {
-            if (number >= value)
-                return value;
+    private static Optional<Banknote> closest(Collection<Banknote> sortedValues, int number) {
+        for (var value : sortedValues) {
+            if (number >= value.getValue()) {
+                return Optional.of(value);
+            }
         }
-        return -1;
+        return Optional.empty();
     }
 
+    private static BiFunction<Object, Integer, Integer> INCREMENT_OR_1 = (k, v) -> (v == null) ? 1 : v + 1;
 }

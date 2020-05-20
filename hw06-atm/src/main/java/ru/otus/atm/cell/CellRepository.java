@@ -1,5 +1,6 @@
 package ru.otus.atm.cell;
 
+import ru.otus.atm.banknote.Banknote;
 import ru.otus.atm.exceptions.IllegalBanknoteException;
 import ru.otus.atm.exceptions.NegativeAmountException;
 
@@ -9,10 +10,12 @@ public interface CellRepository {
 
     int getSum();
 
-    int getAmount(int value) throws IllegalBanknoteException;
+    int getAmount(Banknote banknote) throws IllegalBanknoteException;
 
-    void setAmount(int value, int amount) throws IllegalBanknoteException, NegativeAmountException;
+    void setAmount(Banknote banknote, int amount) throws IllegalBanknoteException, NegativeAmountException;
 
-    Map<Integer, Integer> getCellsContent();
+    void take(Banknote banknote, int amount) throws IllegalBanknoteException, NegativeAmountException;
+
+    Map<Banknote, Integer> getCellsContent();
 
 }
