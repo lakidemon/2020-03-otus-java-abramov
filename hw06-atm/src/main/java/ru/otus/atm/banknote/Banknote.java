@@ -7,4 +7,5 @@ public interface Banknote {
     default int toMoney(int amount) {
         return amount * getValue();
     }
+
 }

@@ -3,8 +3,9 @@ package ru.otus.atm;
 import lombok.RequiredArgsConstructor;
 import ru.otus.atm.banknote.Banknote;
 import ru.otus.atm.banknote.Ruble;
+import ru.otus.atm.cell.Cell;
 import ru.otus.atm.cell.CellRepository;
-import ru.otus.atm.cell.StandardCellRepository;
+import ru.otus.atm.cell.standard.StandardCellRepository;
 import ru.otus.atm.exceptions.InvalidTakeAmountException;
 import ru.otus.atm.exceptions.NegativeAmountException;
 import ru.otus.atm.exceptions.NotEnoughBanknotesException;
@@ -26,11 +27,10 @@ public class ATM {
             throw new NegativeAmountException(sum);
         }
         var takenMap = new HashMap<Banknote, Integer>();
-        var sortedValues = cellRepository.getCellsContent()
-                .entrySet()
+        var sortedValues = cellRepository.getCells()
                 .stream()
-                .filter(e -> e.getValue() > 0)
-                .map(Map.Entry::getKey)
+                .filter(Cell::hasMoney)
+                .map(Cell::getBanknote)
                 .collect(Collectors.toList());
 
         var remaining = sum;
@@ -57,13 +57,13 @@ public class ATM {
     public static ATM atmForRubles() {
         var banknotes = new HashMap<Banknote, Integer>();
         banknotes.put(Ruble._10, 50);
-        banknotes.put(Ruble._50, 100);
-        banknotes.put(Ruble._100, 50);
-        banknotes.put(Ruble._200, 50);
-        banknotes.put(Ruble._500, 50);
         banknotes.put(Ruble._1000, 25);
         banknotes.put(Ruble._2000, 20);
+        banknotes.put(Ruble._50, 100);
+        banknotes.put(Ruble._100, 50);
         banknotes.put(Ruble._5000, 10);
+        banknotes.put(Ruble._200, 50);
+        banknotes.put(Ruble._500, 50);
         return standardATM(banknotes);
     }
 

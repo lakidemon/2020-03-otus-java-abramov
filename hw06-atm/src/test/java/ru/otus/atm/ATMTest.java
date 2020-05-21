@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.atm.banknote.Banknote;
 import ru.otus.atm.banknote.Ruble;
-import ru.otus.atm.cell.StandardCellRepository;
+import ru.otus.atm.cell.standard.StandardCellRepository;
 import ru.otus.atm.exceptions.IllegalBanknoteException;
 import ru.otus.atm.exceptions.InvalidTakeAmountException;
 import ru.otus.atm.exceptions.NegativeAmountException;
@@ -31,14 +31,14 @@ public class ATMTest {
     @DisplayName("должен правильно выдавать деньги минимальным кол-вом купюр")
     void shouldDispenseMoneyCorrectly() {
         var take100 = atm.takeMoney(100);
-        assertEquals(1, take100.size());
-        assertEquals(100, sumMap(take100));
+        assertEquals(1, take100.size(), take100::toString);
+        assertEquals(100, sumMap(take100), take100::toString);
         var take5550 = atm.takeMoney(5550);
-        assertEquals(3, take5550.size());
-        assertEquals(5550, sumMap(take5550));
+        assertEquals(3, take5550.size(), take5550::toString);
+        assertEquals(5550, sumMap(take5550), take5550::toString);
         var take100000 = atm.takeMoney(100_000);
-        assertEquals(3, take100000.size());
-        assertEquals(100_000, sumMap(take100000));
+        assertEquals(3, take100000.size(), take100000::toString);
+        assertEquals(100_000, sumMap(take100000), take100000::toString);
     }
 
     @Test

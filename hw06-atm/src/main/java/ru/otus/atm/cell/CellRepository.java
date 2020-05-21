@@ -4,7 +4,7 @@ import ru.otus.atm.banknote.Banknote;
 import ru.otus.atm.exceptions.IllegalBanknoteException;
 import ru.otus.atm.exceptions.NegativeAmountException;
 
-import java.util.Map;
+import java.util.Collection;
 
 public interface CellRepository {
 
@@ -16,6 +16,6 @@ public interface CellRepository {
 
     void take(Banknote banknote, int amount) throws IllegalBanknoteException, NegativeAmountException;
 
-    Map<Banknote, Integer> getCellsContent();
+    Collection<Cell> getCells();
 
 }
