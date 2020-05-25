@@ -7,6 +7,7 @@ import ru.otus.atm.exceptions.IllegalBanknoteException;
 import ru.otus.atm.exceptions.NegativeAmountException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class StandardCellRepository implements CellRepository {
     private static final Comparator<Cell> CELL_COMPARATOR = Comparator.comparingInt(
@@ -15,7 +16,11 @@ public class StandardCellRepository implements CellRepository {
     private final Set<Cell> cells = new TreeSet<>(CELL_COMPARATOR);
 
     public StandardCellRepository(Map<Banknote, Integer> initialContent) {
-        initialContent.entrySet().stream().map(StandardCell::new).forEach(cells::add);
+        this(initialContent.entrySet().stream().map(StandardCell::new).collect(Collectors.toList()));
+    }
+
+    public StandardCellRepository(Collection<Cell> predefinedCells) {
+        cells.addAll(predefinedCells);
     }
 
     @Override
