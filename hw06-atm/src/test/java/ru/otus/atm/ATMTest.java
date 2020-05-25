@@ -20,11 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Банкомат")
 public class ATMTest {
-    private ATM atm;
+    private StandardATM atm;
 
     @BeforeEach
     void setUp() {
-        atm = ATM.atmForRubles();
+        atm = ATMFactory.atmForRubles();
     }
 
     @Test
