@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ATM {
-    private final CellRepository cellRepository;
+    protected final CellRepository cellRepository;
 
     public int getCurrentSum() {
         return cellRepository.getSum();
