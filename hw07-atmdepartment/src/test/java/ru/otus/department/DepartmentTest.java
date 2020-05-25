@@ -1,6 +1,7 @@
 package ru.otus.department;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.atm.ATM;
 import ru.otus.atm.banknote.Banknote;
@@ -17,6 +18,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("Департамент банкоматов")
 public class DepartmentTest {
     private Department department;
 
@@ -29,6 +31,7 @@ public class DepartmentTest {
     }
 
     @Test
+    @DisplayName("должен показывать корректную сумму остатков")
     void shouldReturnCorrectTotalSum() {
         var manuallyCalculated = department.getATMs()
                 .stream()
@@ -42,9 +45,10 @@ public class DepartmentTest {
     }
 
     @Test
+    @DisplayName("должен нормально восстановиться в исходный вид")
     void shouldRestoreProperly() {
         var beforeRestore = mapDepartment(department);
-        department.getATMs().forEach(atm -> atm.takeMoney(60_000));
+        department.getATMs().forEach(atm -> atm.takeMoney(63_250));
         department.restore();
         assertEquals(beforeRestore, mapDepartment(department));
     }
