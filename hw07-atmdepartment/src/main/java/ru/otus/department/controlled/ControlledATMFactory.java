@@ -1,5 +1,6 @@
 package ru.otus.department.controlled;
 
+import ru.otus.atm.StandardATM;
 import ru.otus.atm.banknote.Ruble;
 import ru.otus.atm.cell.standard.StandardCell;
 import ru.otus.atm.cell.standard.StandardCellRepository;
@@ -18,7 +19,7 @@ public class ControlledATMFactory {
         }
         var repositoryWithProxies = new StandardCellRepository(
                 map.entrySet().stream().map(StandardCell::new).map(ProxiedCell::new).collect(Collectors.toList()));
-        return new ControlledATM(repositoryWithProxies);
+        return new ControlledATM(new StandardATM(repositoryWithProxies));
     }
 
 }

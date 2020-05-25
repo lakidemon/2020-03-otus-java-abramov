@@ -1,6 +1,5 @@
 package ru.otus.department.cell;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.otus.atm.cell.Cell;
 
@@ -18,15 +17,14 @@ public class StateHolder {
         stack.push(new CellState(cell));
     }
 
-    public int getInitialState() {
-        return stack.getLast().getCurrentAmount();
+    public CellState getInitialState() {
+        return stack.getLast();
     }
 
     public void reset() {
         stack.clear();
     }
 
-    @AllArgsConstructor
     @Getter
     public class CellState {
         private int currentAmount;

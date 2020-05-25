@@ -32,7 +32,7 @@ public class ProxiedCell implements Cell, Restorable {
 
     @Override
     public void restore() {
-        int initialState = stateHolder.getInitialState();
+        int initialState = stateHolder.getInitialState().getCurrentAmount();
         stateHolder.reset();
         setAmount(initialState);
     }
