@@ -14,7 +14,7 @@ public class StandardCell implements Cell {
     private final Banknote banknote;
     private int amount;
 
-    public StandardCell(Map.Entry<Banknote, Integer> initialContent) {
+    public StandardCell(Map.Entry<? extends Banknote, Integer> initialContent) {
         this(initialContent.getKey(), initialContent.getValue());
     }
 
