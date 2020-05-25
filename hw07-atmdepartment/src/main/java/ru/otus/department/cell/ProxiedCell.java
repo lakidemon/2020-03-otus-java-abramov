@@ -1,8 +1,9 @@
-package ru.otus.department;
+package ru.otus.department.cell;
 
 import ru.otus.atm.banknote.Banknote;
 import ru.otus.atm.cell.Cell;
 import ru.otus.atm.exceptions.NegativeAmountException;
+import ru.otus.department.Restorable;
 
 public class ProxiedCell implements Cell, Restorable {
     private Cell cell;
@@ -10,7 +11,7 @@ public class ProxiedCell implements Cell, Restorable {
 
     public ProxiedCell(Cell cell) {
         this.cell = cell;
-        this.stateHolder = new StateHolder(cell.getAmount());
+        this.stateHolder = new StateHolder(this);
     }
 
     @Override
@@ -26,7 +27,7 @@ public class ProxiedCell implements Cell, Restorable {
     @Override
     public void setAmount(int amount) throws NegativeAmountException {
         cell.setAmount(amount);
-        stateHolder.saveState(amount);
+        stateHolder.saveState(this);
     }
 
     @Override
