@@ -49,11 +49,11 @@ public class OtusonTest {
     @DisplayName("должен сериализовать сложные объекты")
     void shouldSerializeComplexObjects() {
         var object = new SomeObject();
-        var reference = gson.toJsonTree(object);
         var json = otuson.toJson(object);
-        var parsed = gson.fromJson(json, JsonObject.class);
-        var fromJson = gson.fromJson(json, SomeObject.class);
-        assertEquals(reference, parsed);
-        assertEquals(object, fromJson);
+        var gsonObject = gson.toJsonTree(object);
+        var parsedGsonObject = gson.fromJson(json, JsonObject.class);
+        var objectFromJson = gson.fromJson(json, SomeObject.class);
+        assertEquals(gsonObject, parsedGsonObject);
+        assertEquals(object, objectFromJson);
     }
 }
