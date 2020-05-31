@@ -33,6 +33,7 @@ public class OtusonTest {
         assertEquals("10000000000", otuson.toJson(10000000000L));
         assertEquals("true", otuson.toJson(true));
         assertEquals("false", otuson.toJson(false));
+        assertEquals("null", otuson.toJson(null));
     }
 
     @Test
