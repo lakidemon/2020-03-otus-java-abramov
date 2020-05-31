@@ -23,7 +23,7 @@ public class OtusonTest {
     }
 
     @Test
-    @DisplayName("должен сериализовать примитивные типы и строки")
+    @DisplayName("должен сериализовать примитивные типы, строки, null и Object")
     void shouldSerializePrimitives() {
         assertEquals("\"String\"", otuson.toJson("String"));
         assertEquals("100", otuson.toJson(100));
@@ -34,6 +34,7 @@ public class OtusonTest {
         assertEquals("true", otuson.toJson(true));
         assertEquals("false", otuson.toJson(false));
         assertEquals("null", otuson.toJson(null));
+        assertEquals("{}", otuson.toJson(new Object()));
     }
 
     @Test
