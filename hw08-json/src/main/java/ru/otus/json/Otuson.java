@@ -37,7 +37,7 @@ public class Otuson {
         return adapters.stream()
                 .filter(a -> a.isApplicable(type))
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedTypeException(type));
+                .orElseThrow(() -> new UnsupportedTypeException(type)); // в принципе, это исключение невозможно спровоцировать
     }
 
     public <T> void registerTypeConverter(Class type, Converter<T> converter) {
@@ -55,6 +55,12 @@ public class Otuson {
 
     public static Otuson create() {
         var otuson = new Otuson();
+        otuson.registerAdapter(new Adapter((object, context) -> context.getJson().createObjectBuilder().build()) {
+            @Override
+            public boolean isApplicable(Class clazz) {
+                return clazz.equals(Object.class);
+            }
+        });
         otuson.registerAdapter(new Adapter(Converters.OBJECT_ADAPTER) {
             @Override
             public boolean isApplicable(Class clazz) {
