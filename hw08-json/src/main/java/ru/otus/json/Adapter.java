@@ -8,7 +8,7 @@ import javax.json.JsonValue;
 public abstract class Adapter {
     protected final Converter converter;
 
-    public abstract boolean isApplicable(Class clazz);
+    public abstract boolean isApplicable(Class<?> clazz);
 
     public JsonValue adapt(Object object, OtusonContext context) {
         return converter.toJson(object, context);

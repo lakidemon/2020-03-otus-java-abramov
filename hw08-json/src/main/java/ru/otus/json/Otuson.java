@@ -33,17 +33,18 @@ public class Otuson {
         return adapter.adapt(object, context);
     }
 
-    Adapter matchAdapter(Class type) {
+    Adapter matchAdapter(Class<?> type) {
         return adapters.stream()
                 .filter(a -> a.isApplicable(type))
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedTypeException(type)); // в принципе, это исключение невозможно спровоцировать
+                .orElseThrow(() -> new UnsupportedTypeException(
+                        type)); // в принципе, это исключение невозможно спровоцировать
     }
 
-    public <T> void registerTypeConverter(Class type, Converter<T> converter) {
+    public <T> void registerTypeConverter(Class<?> type, Converter<T> converter) {
         registerAdapter(new Adapter(converter) {
             @Override
-            public boolean isApplicable(Class clazz) {
+            public boolean isApplicable(Class<?> clazz) {
                 return type.isAssignableFrom(clazz);
             }
         });
@@ -57,13 +58,13 @@ public class Otuson {
         var otuson = new Otuson();
         otuson.registerAdapter(new Adapter((object, context) -> context.getJson().createObjectBuilder().build()) {
             @Override
-            public boolean isApplicable(Class clazz) {
+            public boolean isApplicable(Class<?> clazz) {
                 return clazz.equals(Object.class);
             }
         });
         otuson.registerAdapter(new Adapter(Converters.OBJECT_ADAPTER) {
             @Override
-            public boolean isApplicable(Class clazz) {
+            public boolean isApplicable(Class<?> clazz) {
                 return !Object.class.equals(clazz);
             }
         });
@@ -71,12 +72,13 @@ public class Otuson {
         otuson.registerTypeConverter(Collection.class, Converters.COLLECTION_ADAPTER);
         otuson.registerAdapter(new Adapter(Converters.ARRAY_ADAPTER) {
             @Override
-            public boolean isApplicable(Class clazz) {
+            public boolean isApplicable(Class<?> clazz) {
                 return clazz.isArray();
             }
         });
         otuson.registerTypeConverter(Boolean.class, Converters.BOOLEAN_ADAPTER);
         otuson.registerTypeConverter(Number.class, Converters.NUMBER_ADAPTER);
+        otuson.registerTypeConverter(Character.class, Converters.CHARACTER_ADAPTER);
         otuson.registerTypeConverter(String.class, Converters.STRING_ADAPTER);
         return otuson;
     }

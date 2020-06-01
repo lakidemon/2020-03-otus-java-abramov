@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +28,7 @@ public class OtusonTest {
     @DisplayName("должен сериализовать примитивные типы, строки, null и Object")
     void shouldSerializePrimitives() {
         assertEquals("\"String\"", otuson.toJson("String"));
+        assertEquals("\"a\"", otuson.toJson('a'));
         assertEquals("100", otuson.toJson(100));
         assertEquals("100", otuson.toJson((byte) 100));
         assertEquals("100", otuson.toJson((short) 100));
@@ -35,6 +38,23 @@ public class OtusonTest {
         assertEquals("false", otuson.toJson(false));
         assertEquals("null", otuson.toJson(null));
         assertEquals("{}", otuson.toJson(new Object()));
+    }
+
+    @Test
+    @DisplayName("должен производить json аналогично gson")
+    void shouldProduceSameJsonAsGson() {
+        assertEquals(gson.toJson(null), otuson.toJson(null));
+        assertEquals(gson.toJson((byte) 1), otuson.toJson((byte) 1));
+        assertEquals(gson.toJson((short) 1f), otuson.toJson((short) 1f));
+        assertEquals(gson.toJson(1), otuson.toJson(1));
+        assertEquals(gson.toJson(1L), otuson.toJson(1L));
+        assertEquals(gson.toJson(1f), otuson.toJson(1f));
+        assertEquals(gson.toJson(1d), otuson.toJson(1d));
+        assertEquals(gson.toJson("aaa"), otuson.toJson("aaa"));
+        assertEquals(gson.toJson('a'), otuson.toJson('a'));
+        assertEquals(gson.toJson(new int[] { 1, 2, 3 }), otuson.toJson(new int[] { 1, 2, 3 }));
+        assertEquals(gson.toJson(List.of(1, 2, 3)), otuson.toJson(List.of(1, 2, 3)));
+        assertEquals(gson.toJson(Collections.singletonList(1)), otuson.toJson(Collections.singletonList(1)));
     }
 
     @Test

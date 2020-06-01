@@ -14,6 +14,8 @@ import java.util.*;
 public class Converters {
 
     public static final Converter<String> STRING_ADAPTER = (object, context) -> context.getJson().createValue(object);
+    public static final Converter<Character> CHARACTER_ADAPTER = (object, context) -> STRING_ADAPTER.toJson(
+            object.toString(), context);
     public static final Converter<Number> NUMBER_ADAPTER = (object, context) -> {
         var json = context.getJson();
         if (Integer.class.isInstance(object) || Byte.class.isInstance(object) || Short.class.isInstance(object)) {
@@ -39,15 +41,15 @@ public class Converters {
         object.stream().map(context.getOtuson()::toJsonValue).forEach(o -> builder.add((JsonValue) o));
         return builder.build();
     };
-    public static final Converter ARRAY_ADAPTER = (object, context) -> {
+    public static final Converter<Object> ARRAY_ADAPTER = (object, context) -> {
         var builder = context.getJson().createArrayBuilder();
         for (int i = 0; i < Array.getLength(object); i++) {
             builder.add(context.getOtuson().toJsonValue(Array.get(object, i)));
         }
         return builder.build();
     };
-    public static final Converter<Map> MAP_ADAPTER = Converters::objectFromMap;
-    public static final Converter OBJECT_ADAPTER = Converters::adaptObject;
+    public static final Converter<Map<String, Object>> MAP_ADAPTER = Converters::adaptMap;
+    public static final Converter<Object> OBJECT_ADAPTER = Converters::adaptObject;
 
     @SneakyThrows
     private static JsonObject adaptObject(Object o, OtusonContext context) {
@@ -59,12 +61,12 @@ public class Converters {
             var fieldValue = field.get(o);
             map.put(field.getName(), fieldValue);
         }
-        return objectFromMap(map, context);
+        return adaptMap(map, context);
     }
 
-    private static JsonObject objectFromMap(Map map, OtusonContext context) {
+    private static JsonObject adaptMap(Map<String, Object> map, OtusonContext context) {
         var builder = context.getJson().createObjectBuilder();
-        map.forEach((name, value) -> builder.add(String.valueOf(name), context.getOtuson().toJsonValue(value)));
+        map.forEach((name, value) -> builder.add(name, context.getOtuson().toJsonValue(value)));
         return builder.build();
     }
 
