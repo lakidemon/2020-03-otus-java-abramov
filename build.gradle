@@ -38,6 +38,8 @@ allprojects {
         dependencies {
             dependency "com.google.guava:guava:${Deps.guava}"
             dependency "org.junit.jupiter:junit-jupiter:${Deps.junit}"
+            dependency "org.glassfish:javax.json:${Deps.gfJson}"
+            dependency "com.google.code.gson:gson:${Deps.gson}"
         }
     }
 }
