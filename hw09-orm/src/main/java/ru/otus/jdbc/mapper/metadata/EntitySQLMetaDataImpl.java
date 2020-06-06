@@ -28,8 +28,8 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
         var selectAll = String.format(SELECT_TEMPLATE, tableName, "");
         var selectById = String.format(SELECT_TEMPLATE, tableName, whereId);
-        var insert = String.format(INSERT_TEMPLATE, tableName, concatFieldNames(classMetaData.getAllFields()),
-                generateParameters(classMetaData.getAllFields().size()));
+        var insert = String.format(INSERT_TEMPLATE, tableName, concatFieldNames(classMetaData.getFieldsWithoutId()),
+                generateParameters(classMetaData.getFieldsWithoutId().size()));
         var update = String.format(UPDATE_TEMPLATE, tableName,
                 generateFieldNamesAndParameters(classMetaData.getFieldsWithoutId()), whereId);
 

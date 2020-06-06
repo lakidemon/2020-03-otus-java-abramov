@@ -1,18 +1,25 @@
 package ru.otus.jdbc.mapper;
 
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.otus.core.sessionmanager.SessionManager;
-import ru.otus.h2.DataSourceH2;
 import ru.otus.jdbc.DbExecutor;
-import ru.otus.jdbc.DbExecutorImpl;
 import ru.otus.jdbc.mapper.metadata.EntityClassMetaDataImpl;
 import ru.otus.jdbc.mapper.metadata.EntitySQLMetaDataImpl;
-import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
+
+import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
 public class BasicJdbcMapper<T> implements JdbcMapper<T> {
+    @Getter
     private final Class<T> type;
     private final SessionManager sessionManager;
     private final DbExecutor<T> dbExecutor;
@@ -20,27 +27,49 @@ public class BasicJdbcMapper<T> implements JdbcMapper<T> {
     private final EntitySQLMetaData sqlMetaData;
 
     @Override
-    public void insert(T objectData) {
+    public void insert(@NonNull T objectData) {
+        try {
+            dbExecutor.executeInsert(sessionManager.getCurrentSession().getConnection(), sqlMetaData.getInsertSql(),
+                    extractFields(objectData, classMetaData.getFieldsWithoutId()));
+        } catch (SQLException e) {
+            throw new MapperException("Cannot execute insert for " + objectData, e);
+        }
+    }
+
+    @Override
+    public void update(@NonNull T objectData) {
 
     }
 
     @Override
-    public void update(T objectData) {
+    public void insertOrUpdate(@NonNull T objectData) {
 
     }
 
     @Override
-    public void insertOrUpdate(T objectData) {
-
+    public Optional<T> findById(long id) {
+        try {
+            return dbExecutor.executeSelect(sessionManager.getCurrentSession().getConnection(),
+                    sqlMetaData.getSelectByIdSql(), id, this::mapObject);
+        } catch (SQLException e) {
+            throw new MapperException("Cannot execute select for id " + id, e);
+        }
     }
 
-    @Override
-    public T findById(long id, Class<T> clazz) {
-        return null;
-    }
+    private T mapObject(ResultSet resultSet) {
+        var constructorParams = classMetaData.getAllFields().stream().map(f -> {
+            try {
+                return resultSet.getObject(f.getName());
+            } catch (SQLException e) {
+                throw new MapperException("Cannot get column " + f.getName() + " value from ResultSet", e);
+            }
+        }).toArray(Object[]::new);
 
-    public static <T> BasicJdbcMapper<T> forType(Class<T> type) {
-        return forType(type, new SessionManagerJdbc(new DataSourceH2()), new DbExecutorImpl<>());
+        try {
+            return classMetaData.getConstructor().newInstance(constructorParams);
+        } catch (ReflectiveOperationException e) {
+            throw new MapperException("Failed to instantiate object " + type.getName(), e);
+        }
     }
 
     public static <T> BasicJdbcMapper<T> forType(Class<T> type, SessionManager manager, DbExecutor<T> executor) {
@@ -55,6 +84,16 @@ public class BasicJdbcMapper<T> implements JdbcMapper<T> {
         log.debug("Update: " + sqlMetaData.getUpdateSql());
 
         return mapper;
+    }
+
+    private List<Object> extractFields(T object, List<Field> fields) {
+        return fields.stream().map(f -> {
+            try {
+                return f.get(object);
+            } catch (IllegalAccessException e) {
+                throw new MapperException("Cannot get value of " + f.getName() + " field", e);
+            }
+        }).collect(Collectors.toList());
     }
 
 }
