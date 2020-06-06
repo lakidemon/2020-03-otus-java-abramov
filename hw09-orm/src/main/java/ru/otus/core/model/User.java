@@ -1,31 +1,12 @@
 package ru.otus.core.model;
 
-/**
- * @author sergey
- * created on 03.02.19.
- */
+import lombok.Data;
+import ru.otus.jdbc.mapper.Id;
+
+@Data
 public class User {
+    @Id
     private final long id;
     private final String name;
-
-    public User(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
+    private final int age;
 }

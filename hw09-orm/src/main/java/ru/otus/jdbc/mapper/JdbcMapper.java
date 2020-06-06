@@ -1,5 +1,7 @@
 package ru.otus.jdbc.mapper;
 
+import java.util.Optional;
+
 public interface JdbcMapper<T> {
     void insert(T objectData);
 
@@ -7,5 +9,5 @@ public interface JdbcMapper<T> {
 
     void insertOrUpdate(T objectData);
 
-    T findById(long id, Class<T> clazz);
+    Optional<T> findById(long id);
 }

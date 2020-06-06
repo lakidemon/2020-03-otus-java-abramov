@@ -1,68 +1,44 @@
 package ru.otus.jdbc.dao;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
 import ru.otus.core.dao.UserDao;
-import ru.otus.core.dao.UserDaoException;
 import ru.otus.core.model.User;
 import ru.otus.core.sessionmanager.SessionManager;
-import ru.otus.jdbc.DbExecutorImpl;
-import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
+import ru.otus.jdbc.DbExecutor;
+import ru.otus.jdbc.mapper.BasicJdbcMapper;
+import ru.otus.jdbc.mapper.JdbcMapper;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Optional;
 
 public class UserDaoJdbc implements UserDao {
-    private static final Logger logger = LoggerFactory.getLogger(UserDaoJdbc.class);
+    @Getter
+    private final SessionManager sessionManager;
+    private final JdbcMapper<User> mapper;
 
-    private final SessionManagerJdbc sessionManager;
-    private final DbExecutorImpl<User> dbExecutor;
-
-    public UserDaoJdbc(SessionManagerJdbc sessionManager, DbExecutorImpl<User> dbExecutor) {
+    public UserDaoJdbc(SessionManager sessionManager, DbExecutor<User> dbExecutor) {
         this.sessionManager = sessionManager;
-        this.dbExecutor = dbExecutor;
+        this.mapper = BasicJdbcMapper.forType(User.class, sessionManager, dbExecutor);
     }
 
     @Override
     public Optional<User> findById(long id) {
-        try {
-            return dbExecutor.executeSelect(getConnection(), "select id, name from user where id  = ?",
-                    id, rs -> {
-                        try {
-                            if (rs.next()) {
-                                return new User(rs.getLong("id"), rs.getString("name"));
-                            }
-                        } catch (SQLException e) {
-                            logger.error(e.getMessage(), e);
-                        }
-                        return null;
-                    });
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        return Optional.empty();
+        return mapper.findById(id);
     }
 
     @Override
     public long insertUser(User user) {
-        try {
-            return dbExecutor.executeInsert(getConnection(), "insert into user(name) values (?)",
-                    Collections.singletonList(user.getName()));
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new UserDaoException(e);
-        }
+        mapper.insert(user);
+        return user.getId();
     }
 
     @Override
-    public SessionManager getSessionManager() {
-        return sessionManager;
+    public void updateUser(User user) {
+        mapper.update(user);
     }
 
-    private Connection getConnection() {
-        return sessionManager.getCurrentSession().getConnection();
+    @Override
+    public void insertOrUpdate(User user) {
+        mapper.insertOrUpdate(user);
     }
+
 }
