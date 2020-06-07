@@ -1,5 +1,8 @@
 package ru.otus.h2;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -11,12 +14,23 @@ import java.util.logging.Logger;
  * @author sergey
  * created on 03.02.19.
  */
+@Slf4j
+@RequiredArgsConstructor
 public class DataSourceH2 implements DataSource {
-    private static final String URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+    private final String url;
+
+    static {
+        try {
+            // получаем доступ к in-memory базе извне
+            org.h2.tools.Server.createTcpServer().start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public Connection getConnection() throws SQLException {
-        var connection = DriverManager.getConnection(URL);
+        var connection = DriverManager.getConnection(url);
         connection.setAutoCommit(false);
         return connection;
     }
