@@ -1,6 +1,5 @@
 package ru.otus.jdbc.mapper;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.otus.core.model.User;
 import ru.otus.jdbc.mapper.metadata.EntityClassMetaDataImpl;
@@ -11,11 +10,10 @@ import ru.otus.model.IncorrectModels;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EntityClassMetaDataTest {
-    static EntityClassMetaData<User> classMetaData;
 
-    @BeforeAll
-    static void setup() {
-        classMetaData = EntityClassMetaDataImpl.create(User.class);
+    @Test
+    void shouldCreateUserData() {
+        assertDoesNotThrow(this::userMetadata);
     }
 
     @Test
@@ -30,22 +28,22 @@ class EntityClassMetaDataTest {
 
     @Test
     void shouldFindCorrectIdField() {
-        assertEquals("id", classMetaData.getIdField().getName());
+        assertEquals("id", userMetadata().getIdField().getName());
     }
 
     @Test
     void shouldFindAllFields() {
-        assertEquals(3, classMetaData.getAllFields().size());
+        assertEquals(3, userMetadata().getAllFields().size());
     }
 
     @Test
     void shouldFindCorrectConstructor() {
-        assertEquals(3, classMetaData.getConstructor().getParameterCount());
+        assertEquals(3, userMetadata().getConstructor().getParameterCount());
     }
 
     @Test
     void shouldHaveCorrectName() {
-        assertEquals("User", classMetaData.getName());
+        assertEquals("User", userMetadata().getName());
     }
 
     @Test
@@ -53,5 +51,9 @@ class EntityClassMetaDataTest {
         var classMetaData = EntityClassMetaDataImpl.create(Account.class);
         assertEquals(3, classMetaData.getConstructor().getParameterCount());
         assertEquals("no", classMetaData.getIdField().getName());
+    }
+
+    EntityClassMetaData<User> userMetadata() {
+        return EntityClassMetaDataImpl.create(User.class);
     }
 }
