@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
     private static final String SELECT_TEMPLATE = "SELECT * FROM %s %s;";
     private static final String INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s);";
-    private static final String UPDATE_TEMPLATE = "UPDATE %s SET %s WHERE %s;";
+    private static final String UPDATE_TEMPLATE = "UPDATE %s SET %s %s;";
 
     private final String selectAllSql;
     private final String selectByIdSql;
