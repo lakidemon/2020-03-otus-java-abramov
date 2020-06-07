@@ -5,7 +5,7 @@ import ru.otus.core.dao.UserDao;
 import ru.otus.core.model.User;
 import ru.otus.core.sessionmanager.SessionManager;
 import ru.otus.jdbc.DbExecutor;
-import ru.otus.jdbc.mapper.BasicJdbcMapper;
+import ru.otus.jdbc.mapper.JdbcMapperImpl;
 import ru.otus.jdbc.mapper.JdbcMapper;
 
 import java.util.Optional;
@@ -17,7 +17,7 @@ public class UserDaoJdbc implements UserDao {
 
     public UserDaoJdbc(SessionManager sessionManager, DbExecutor<User> dbExecutor) {
         this.sessionManager = sessionManager;
-        this.mapper = BasicJdbcMapper.forType(User.class, sessionManager, dbExecutor);
+        this.mapper = JdbcMapperImpl.forType(User.class, sessionManager, dbExecutor);
     }
 
     @Override

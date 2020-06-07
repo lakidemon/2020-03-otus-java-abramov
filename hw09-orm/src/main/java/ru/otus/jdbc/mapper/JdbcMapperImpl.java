@@ -3,6 +3,7 @@ package ru.otus.jdbc.mapper;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.otus.core.sessionmanager.SessionManager;
 import ru.otus.jdbc.DbExecutor;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
-public class BasicJdbcMapper<T> implements JdbcMapper<T> {
+public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     @Getter
     private final Class<T> type;
     private final SessionManager sessionManager;
@@ -29,8 +30,9 @@ public class BasicJdbcMapper<T> implements JdbcMapper<T> {
     @Override
     public void insert(@NonNull T objectData) {
         try {
-            dbExecutor.executeInsert(sessionManager.getCurrentSession().getConnection(), sqlMetaData.getInsertSql(),
-                    extractFields(objectData, classMetaData.getFieldsWithoutId()));
+            var id = dbExecutor.executeInsert(sessionManager.getCurrentSession().getConnection(),
+                    sqlMetaData.getInsertSql(), extractFields(objectData, classMetaData.getFieldsWithoutId()));
+            injectId(objectData, id);
         } catch (SQLException e) {
             throw new MapperException("Cannot execute insert for " + objectData, e);
         }
@@ -38,12 +40,25 @@ public class BasicJdbcMapper<T> implements JdbcMapper<T> {
 
     @Override
     public void update(@NonNull T objectData) {
-
+        var id = extractId(objectData);
+        if (id == 0) {
+            throw new MapperException("Cannot update object " + objectData + " which is not stored in database");
+        }
+        try {
+            dbExecutor.executeInsert(sessionManager.getCurrentSession().getConnection(), sqlMetaData.getUpdateSql(),
+                    extractFields(objectData, classMetaData.getFieldsWithoutId()));
+        } catch (SQLException e) {
+            throw new MapperException("Cannot update " + objectData, e);
+        }
     }
 
     @Override
     public void insertOrUpdate(@NonNull T objectData) {
-
+        if (extractId(objectData) == 0) {
+            insert(objectData);
+        } else {
+            update(objectData);
+        }
     }
 
     @Override
@@ -57,6 +72,14 @@ public class BasicJdbcMapper<T> implements JdbcMapper<T> {
     }
 
     private T mapObject(ResultSet resultSet) {
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new MapperException("Unexpected exception during mapping", e);
+        }
+
         var constructorParams = classMetaData.getAllFields().stream().map(f -> {
             try {
                 return resultSet.getObject(f.getName());
@@ -72,10 +95,20 @@ public class BasicJdbcMapper<T> implements JdbcMapper<T> {
         }
     }
 
-    public static <T> BasicJdbcMapper<T> forType(Class<T> type, SessionManager manager, DbExecutor<T> executor) {
+    @SneakyThrows
+    private void injectId(T object, long id) {
+        classMetaData.getIdField().set(object, id);
+    }
+
+    @SneakyThrows
+    private int extractId(T object) {
+        return (int) classMetaData.getIdField().get(object);
+    }
+
+    public static <T> JdbcMapperImpl<T> forType(Class<T> type, SessionManager manager, DbExecutor<T> executor) {
         var classMetaData = EntityClassMetaDataImpl.create(type);
         var sqlMetaData = EntitySQLMetaDataImpl.createFromClass(classMetaData);
-        var mapper = new BasicJdbcMapper<>(type, manager, executor, classMetaData, sqlMetaData);
+        var mapper = new JdbcMapperImpl<>(type, manager, executor, classMetaData, sqlMetaData);
 
         log.debug("Name: " + classMetaData.getName());
         log.debug("Select all: " + sqlMetaData.getSelectAllSql());
