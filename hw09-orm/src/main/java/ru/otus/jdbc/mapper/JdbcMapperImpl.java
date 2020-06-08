@@ -45,8 +45,10 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
             throw new MapperException("Cannot update object " + objectData + " which is not stored in database");
         }
         try {
+            var params = extractFields(objectData, classMetaData.getFieldsWithoutId());
+            params.add(id);
             dbExecutor.executeInsert(sessionManager.getCurrentSession().getConnection(), sqlMetaData.getUpdateSql(),
-                    extractFields(objectData, classMetaData.getFieldsWithoutId()));
+                    params);
         } catch (SQLException e) {
             throw new MapperException("Cannot update " + objectData, e);
         }
