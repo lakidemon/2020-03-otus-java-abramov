@@ -1,5 +1,6 @@
 package ru.otus.jdbc.mapper;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.core.model.User;
 import ru.otus.jdbc.mapper.metadata.EntityClassMetaDataImpl;
@@ -16,11 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class EntityClassMetaDataTest {
 
     @Test
+    @DisplayName("должен успешно создаваться")
     void shouldCreateUserData() {
         assertDoesNotThrow(this::userMetadata);
     }
 
     @Test
+    @DisplayName("не должен создаваться для неподходящих классов")
     void shouldFailIfIncorrectModelProvided() {
         assertThrows(MetadataException.class,
                 () -> EntityClassMetaDataImpl.create(IncorrectModels.WithoutAnnotation.class));
@@ -33,6 +36,7 @@ class EntityClassMetaDataTest {
     }
 
     @Test
+    @DisplayName("должен допускать только определённые типы поля @Id")
     void shouldCheckIdTypeCorrectly() {
         assertTrue(EntityClassMetaDataImpl.isNumeric(long.class));
         assertTrue(EntityClassMetaDataImpl.isNumeric(int.class));
@@ -54,26 +58,31 @@ class EntityClassMetaDataTest {
     }
 
     @Test
+    @DisplayName("должен правильно находить @Id поле")
     void shouldFindCorrectIdField() {
         assertEquals("id", userMetadata().getIdField().getName());
     }
 
     @Test
+    @DisplayName("должен находить все нужные поля")
     void shouldFindAllFields() {
         assertEquals(3, userMetadata().getAllFields().size());
     }
 
     @Test
+    @DisplayName("должен находить подходящий конструктор")
     void shouldFindCorrectConstructor() {
         assertEquals(3, userMetadata().getConstructor().getParameterCount());
     }
 
     @Test
+    @DisplayName("должен задавать правильное имя таблицы")
     void shouldHaveCorrectName() {
         assertEquals("User", userMetadata().getName());
     }
 
     @Test
+    @DisplayName("должен поддерживать Account из дз")
     void shouldHandleAccountClassCorrectly() {
         var classMetaData = EntityClassMetaDataImpl.create(Account.class);
         assertEquals(3, classMetaData.getConstructor().getParameterCount());
