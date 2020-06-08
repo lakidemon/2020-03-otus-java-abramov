@@ -2,9 +2,9 @@ package ru.otus.jdbc.mapper;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.otus.core.model.User;
-import ru.otus.jdbc.mapper.metadata.EntityClassMetaDataImpl;
 import ru.otus.jdbc.mapper.metadata.EntitySQLMetaDataImpl;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +13,7 @@ class EntitySQLMetaDataTest {
 
     @BeforeAll
     static void setup() {
-        sqlMetaData = EntitySQLMetaDataImpl.createFromClass(EntityClassMetaDataImpl.create(User.class));
+        sqlMetaData = EntitySQLMetaDataImpl.create("User", "id", Arrays.asList("name", "age"));
     }
 
     @Test

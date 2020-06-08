@@ -24,27 +24,28 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     public static EntitySQLMetaData createFromClass(EntityClassMetaData<?> classMetaData) {
         var tableName = classMetaData.getName();
-        var whereId = String.format("WHERE `%s`=?", classMetaData.getIdField().getName());
+        var fields = classMetaData.getFieldsWithoutId().stream().map(Field::getName).collect(Collectors.toList());
+        return create(tableName, classMetaData.getIdField().getName(), fields);
+    }
+
+    public static EntitySQLMetaData create(String tableName, String idField, List<String> fieldNames) {
+        var whereId = String.format("WHERE `%s`=?", idField);
 
         var selectAll = String.format(SELECT_TEMPLATE, tableName, "");
         var selectById = String.format(SELECT_TEMPLATE, tableName, whereId);
-        var insert = String.format(INSERT_TEMPLATE, tableName, concatFieldNames(classMetaData.getFieldsWithoutId()),
-                generateParameters(classMetaData.getFieldsWithoutId().size()));
-        var update = String.format(UPDATE_TEMPLATE, tableName,
-                generateFieldNamesAndParameters(classMetaData.getFieldsWithoutId()), whereId);
+        var insert = String.format(INSERT_TEMPLATE, tableName, String.join(",", fieldNames),
+                generateParameters(fieldNames.size()));
+        var update = String.format(UPDATE_TEMPLATE, tableName, generateFieldNamesAndParameters(fieldNames), whereId);
 
         return new EntitySQLMetaDataImpl(selectAll, selectById, insert, update);
     }
 
-    private static String generateFieldNamesAndParameters(List<Field> fields) {
-        return fields.stream().map(field -> String.format("`%s`=?", field.getName())).collect(Collectors.joining(","));
+    private static String generateFieldNamesAndParameters(List<String> fields) {
+        return fields.stream().map(field -> String.format("`%s`=?", field)).collect(Collectors.joining(","));
     }
 
     private static String generateParameters(int amount) {
         return IntStream.range(0, amount).mapToObj(i -> "?").collect(Collectors.joining(","));
     }
 
-    private static String concatFieldNames(List<Field> fields) {
-        return fields.stream().map(Field::getName).collect(Collectors.joining(","));
-    }
 }
