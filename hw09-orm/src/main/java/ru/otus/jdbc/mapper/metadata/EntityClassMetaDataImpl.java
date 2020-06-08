@@ -1,6 +1,7 @@
 package ru.otus.jdbc.mapper.metadata;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ru.otus.jdbc.mapper.EntityClassMetaData;
 import ru.otus.jdbc.mapper.Id;
@@ -10,13 +11,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Getter
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
-    private final Class<T> type;
     private final String name;
     private final Constructor<T> constructor;
     private final Field idField;
@@ -35,6 +37,9 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
                 .filter(field -> field.isAnnotationPresent(Id.class))
                 .findFirst()
                 .orElseThrow(() -> new MetadataException("No @Id field for type " + type.getName()));
+        if (!isNumeric(idField.getType())) {
+            throw new MetadataException("Non-numeric @Id field type: " + idField.getType());
+        }
         var constructor = (Constructor<T>) Arrays.stream(type.getDeclaredConstructors())
                 .filter(c -> isApplicableConstructor(c, allFields))
                 .findFirst()
@@ -44,8 +49,26 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
         constructor.setAccessible(true);
         allFields.forEach(field -> field.setAccessible(true));
 
-        return new EntityClassMetaDataImpl<>(type, type.getSimpleName(), constructor, idField, allFields);
+        return new EntityClassMetaDataImpl<>(type.getSimpleName(), constructor, idField, allFields);
     }
+
+    public static boolean isNumeric(@NonNull Class<?> type) {
+        if (!type.isPrimitive()) {
+            if (!Number.class.isAssignableFrom(type)) {
+                return false;
+            } else {
+                try {
+                    type = (Class<?>) type.getDeclaredField("TYPE").get(null);
+                } catch (IllegalAccessException | NoSuchFieldException | ClassCastException e) {
+                    return false;
+                }
+            }
+        }
+        return allowedIdTypes.contains(type);
+    }
+
+    private static Set<Class<?>> allowedIdTypes = Stream.of(int.class, long.class, short.class, byte.class)
+            .collect(Collectors.toSet());
 
     private static boolean isApplicableField(Field field) {
         var modifier = field.getModifiers();

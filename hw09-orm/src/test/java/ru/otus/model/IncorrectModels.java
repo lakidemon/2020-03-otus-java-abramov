@@ -12,6 +12,13 @@ public class IncorrectModels {
         private String field2;
     }
 
+    @AllArgsConstructor
+    public class WithWrongIdTypeAnnotation {
+        private double id;
+        private String field1;
+        private String field2;
+    }
+
     public class WithoutConstructor {
         @Id
         private int id;

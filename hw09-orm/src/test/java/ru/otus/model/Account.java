@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Data
 public class Account {
     @Id
-    private final long no;
+    private final Long no;
     private String type;
     private BigDecimal rest;
 
@@ -16,7 +16,7 @@ public class Account {
         this(0L, type, rest);
     }
 
-    public Account(long no, String type, BigDecimal rest) {
+    public Account(Long no, String type, BigDecimal rest) {
         this.no = no;
         this.type = type;
         this.rest = rest;

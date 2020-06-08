@@ -7,6 +7,10 @@ import ru.otus.jdbc.mapper.metadata.MetadataException;
 import ru.otus.model.Account;
 import ru.otus.model.IncorrectModels;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EntityClassMetaDataTest {
@@ -23,7 +27,30 @@ class EntityClassMetaDataTest {
         assertThrows(MetadataException.class,
                 () -> EntityClassMetaDataImpl.create(IncorrectModels.WithoutConstructor.class));
         assertThrows(MetadataException.class,
+                () -> EntityClassMetaDataImpl.create(IncorrectModels.WithWrongIdTypeAnnotation.class));
+        assertThrows(MetadataException.class,
                 () -> EntityClassMetaDataImpl.create(IncorrectModels.WithoutRequiredConstructor.class));
+    }
+
+    @Test
+    void shouldCheckIdTypeCorrectly() {
+        assertTrue(EntityClassMetaDataImpl.isNumeric(long.class));
+        assertTrue(EntityClassMetaDataImpl.isNumeric(int.class));
+        assertTrue(EntityClassMetaDataImpl.isNumeric(byte.class));
+        assertTrue(EntityClassMetaDataImpl.isNumeric(short.class));
+        assertTrue(EntityClassMetaDataImpl.isNumeric(Long.class));
+        assertTrue(EntityClassMetaDataImpl.isNumeric(Integer.class));
+        assertTrue(EntityClassMetaDataImpl.isNumeric(Byte.class));
+        assertTrue(EntityClassMetaDataImpl.isNumeric(Short.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(Double.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(Float.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(double.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(float.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(BigDecimal.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(BigInteger.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(String.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(System.class));
+        assertFalse(EntityClassMetaDataImpl.isNumeric(AtomicInteger.class));
     }
 
     @Test
