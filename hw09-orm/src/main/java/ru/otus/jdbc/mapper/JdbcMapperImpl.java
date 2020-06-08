@@ -104,7 +104,7 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
 
     @SneakyThrows
     private int extractId(T object) {
-        return (int) classMetaData.getIdField().get(object);
+        return ((Number) classMetaData.getIdField().get(object)).intValue();
     }
 
     public static <T> JdbcMapperImpl<T> forType(Class<T> type, SessionManager manager, DbExecutor<T> executor) {
