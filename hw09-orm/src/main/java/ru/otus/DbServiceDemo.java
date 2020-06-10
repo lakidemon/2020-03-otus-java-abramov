@@ -6,6 +6,7 @@ import ru.otus.core.service.DbServiceUserImpl;
 import ru.otus.h2.DataSourceH2;
 import ru.otus.jdbc.DbExecutorImpl;
 import ru.otus.jdbc.dao.UserDaoJdbc;
+import ru.otus.jdbc.mapper.JdbcMapperImpl;
 import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 /**
@@ -22,7 +23,8 @@ public class DbServiceDemo {
 
         var sessionManager = new SessionManagerJdbc(dataSource);
         var dbExecutor = new DbExecutorImpl<User>();
-        var userDao = new UserDaoJdbc(sessionManager, dbExecutor);
+        var mapper = JdbcMapperImpl.forType(User.class, sessionManager, dbExecutor);
+        var userDao = new UserDaoJdbc(sessionManager, mapper);
 
         var dbServiceUser = new DbServiceUserImpl(userDao);
         var id = dbServiceUser.saveUser(new User(0, "dbServiceUser", 100));

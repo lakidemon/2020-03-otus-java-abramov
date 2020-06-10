@@ -1,24 +1,19 @@
 package ru.otus.jdbc.dao;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import ru.otus.core.dao.UserDao;
 import ru.otus.core.model.User;
 import ru.otus.core.sessionmanager.SessionManager;
-import ru.otus.jdbc.DbExecutor;
-import ru.otus.jdbc.mapper.JdbcMapperImpl;
 import ru.otus.jdbc.mapper.JdbcMapper;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class UserDaoJdbc implements UserDao {
     @Getter
     private final SessionManager sessionManager;
     private final JdbcMapper<User> mapper;
-
-    public UserDaoJdbc(SessionManager sessionManager, DbExecutor<User> dbExecutor) {
-        this.sessionManager = sessionManager;
-        this.mapper = JdbcMapperImpl.forType(User.class, sessionManager, dbExecutor);
-    }
 
     @Override
     public Optional<User> findById(long id) {
