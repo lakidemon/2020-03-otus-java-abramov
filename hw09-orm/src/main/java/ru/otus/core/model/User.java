@@ -1,13 +1,16 @@
 package ru.otus.core.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import ru.otus.jdbc.mapper.Id;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
-    private final long id;
-    private @NonNull String name;
-    private final int age;
+    private long id;
+    private String name;
+    private int age;
 }

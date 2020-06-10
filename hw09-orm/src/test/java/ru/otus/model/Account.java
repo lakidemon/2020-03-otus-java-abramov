@@ -1,14 +1,16 @@
 package ru.otus.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.otus.jdbc.mapper.Id;
 
 import java.math.BigDecimal;
 
 @Data
+@NoArgsConstructor
 public class Account {
     @Id
-    private final Long no;
+    private Long no;
     private String type;
     private BigDecimal rest;
 

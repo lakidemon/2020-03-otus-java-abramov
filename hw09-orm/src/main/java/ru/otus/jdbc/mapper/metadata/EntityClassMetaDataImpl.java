@@ -37,22 +37,23 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
                 .filter(field -> field.isAnnotationPresent(Id.class))
                 .findFirst()
                 .orElseThrow(() -> new MetadataException("No @Id field for type " + type.getName()));
-        if (!isNumeric(idField.getType())) {
+        if (!isInteger(idField.getType())) {
             throw new MetadataException("Non-numeric @Id field type: " + idField.getType());
         }
-        var constructor = (Constructor<T>) Arrays.stream(type.getDeclaredConstructors())
-                .filter(c -> isApplicableConstructor(c, allFields))
-                .findFirst()
-                .orElseThrow(() -> new MetadataException(
-                        "Cannot find constructor " + type.getName() + "(" + fieldsToString(allFields) + ")"));
+        Constructor<T> constructor = null;
+        try {
+            constructor = type.getConstructor();
+            constructor.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            throw new MetadataException("Cannot find no-args constructor for " + type.getName(), e);
+        }
 
-        constructor.setAccessible(true);
         allFields.forEach(field -> field.setAccessible(true));
 
         return new EntityClassMetaDataImpl<>(type.getSimpleName(), constructor, idField, allFields);
     }
 
-    public static boolean isNumeric(@NonNull Class<?> type) {
+    public static boolean isInteger(@NonNull Class<?> type) {
         if (!type.isPrimitive()) {
             if (!Number.class.isAssignableFrom(type)) {
                 return false;
@@ -67,28 +68,12 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
         return allowedIdTypes.contains(type);
     }
 
-    private static Set<Class<?>> allowedIdTypes = Stream.of(int.class, long.class, short.class, byte.class)
-            .collect(Collectors.toSet());
+    private static Set<Class<? extends Number>> allowedIdTypes = Stream.of(int.class, long.class, short.class,
+            byte.class).collect(Collectors.toSet());
 
     private static boolean isApplicableField(Field field) {
         var modifier = field.getModifiers();
         return !Modifier.isStatic(modifier);
     }
 
-    private static boolean isApplicableConstructor(Constructor<?> constructor, List<Field> required) {
-        if (constructor.getParameterCount() != required.size()) {
-            return false;
-        }
-        var types = constructor.getParameterTypes();
-        for (int i = 0; i < types.length; i++) {
-            if (!required.get(i).getType().isAssignableFrom(types[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static String fieldsToString(List<Field> fields) {
-        return fields.stream().map(Field::getType).map(Class::getSimpleName).collect(Collectors.joining(", "));
-    }
 }

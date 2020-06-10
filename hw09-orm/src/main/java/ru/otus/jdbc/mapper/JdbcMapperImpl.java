@@ -82,16 +82,20 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
             throw new MapperException("Unexpected exception during mapping", e);
         }
 
-        var constructorParams = classMetaData.getAllFields().stream().map(f -> {
-            try {
-                return resultSet.getObject(f.getName());
-            } catch (SQLException e) {
-                throw new MapperException("Cannot get column " + f.getName() + " value from ResultSet", e);
-            }
-        }).toArray(Object[]::new);
-
         try {
-            return classMetaData.getConstructor().newInstance(constructorParams);
+            var object = classMetaData.getConstructor().newInstance();
+
+            classMetaData.getAllFields().stream().forEach(f -> {
+                try {
+                    var value = resultSet.getObject(f.getName());
+                    f.set(object, value);
+                } catch (SQLException e) {
+                    throw new MapperException("Cannot get column " + f.getName() + " value from ResultSet", e);
+                } catch (IllegalAccessException e) {
+                    throw new MapperException("Cannot set field " + f.getName() + " of type " + type.getName(), e);
+                }
+            });
+            return object;
         } catch (ReflectiveOperationException e) {
             throw new MapperException("Failed to instantiate object " + type.getName(), e);
         }

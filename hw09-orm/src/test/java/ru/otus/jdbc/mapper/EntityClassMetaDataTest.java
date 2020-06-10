@@ -38,23 +38,23 @@ class EntityClassMetaDataTest {
     @Test
     @DisplayName("должен допускать только определённые типы поля @Id")
     void shouldCheckIdTypeCorrectly() {
-        assertTrue(EntityClassMetaDataImpl.isNumeric(long.class));
-        assertTrue(EntityClassMetaDataImpl.isNumeric(int.class));
-        assertTrue(EntityClassMetaDataImpl.isNumeric(byte.class));
-        assertTrue(EntityClassMetaDataImpl.isNumeric(short.class));
-        assertTrue(EntityClassMetaDataImpl.isNumeric(Long.class));
-        assertTrue(EntityClassMetaDataImpl.isNumeric(Integer.class));
-        assertTrue(EntityClassMetaDataImpl.isNumeric(Byte.class));
-        assertTrue(EntityClassMetaDataImpl.isNumeric(Short.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(Double.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(Float.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(double.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(float.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(BigDecimal.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(BigInteger.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(String.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(System.class));
-        assertFalse(EntityClassMetaDataImpl.isNumeric(AtomicInteger.class));
+        assertTrue(EntityClassMetaDataImpl.isInteger(long.class));
+        assertTrue(EntityClassMetaDataImpl.isInteger(int.class));
+        assertTrue(EntityClassMetaDataImpl.isInteger(byte.class));
+        assertTrue(EntityClassMetaDataImpl.isInteger(short.class));
+        assertTrue(EntityClassMetaDataImpl.isInteger(Long.class));
+        assertTrue(EntityClassMetaDataImpl.isInteger(Integer.class));
+        assertTrue(EntityClassMetaDataImpl.isInteger(Byte.class));
+        assertTrue(EntityClassMetaDataImpl.isInteger(Short.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(Double.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(Float.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(double.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(float.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(BigDecimal.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(BigInteger.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(String.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(System.class));
+        assertFalse(EntityClassMetaDataImpl.isInteger(AtomicInteger.class));
     }
 
     @Test
@@ -70,9 +70,9 @@ class EntityClassMetaDataTest {
     }
 
     @Test
-    @DisplayName("должен находить подходящий конструктор")
+    @DisplayName("должен находить пустой конструктор")
     void shouldFindCorrectConstructor() {
-        assertEquals(3, userMetadata().getConstructor().getParameterCount());
+        assertEquals(0, userMetadata().getConstructor().getParameterCount());
     }
 
     @Test
@@ -85,7 +85,7 @@ class EntityClassMetaDataTest {
     @DisplayName("должен поддерживать Account из дз")
     void shouldHandleAccountClassCorrectly() {
         var classMetaData = EntityClassMetaDataImpl.create(Account.class);
-        assertEquals(3, classMetaData.getConstructor().getParameterCount());
+        assertEquals(0, classMetaData.getConstructor().getParameterCount());
         assertEquals("no", classMetaData.getIdField().getName());
     }
 
