@@ -20,11 +20,13 @@ public class DataSourceH2 implements DataSource {
     private final String url;
 
     static {
-        try {
-            // получаем доступ к in-memory базе извне
-            org.h2.tools.Server.createTcpServer().start();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (Boolean.getBoolean("h2.debugServer")) {
+            try {
+                // получаем доступ к in-memory базе извне
+                org.h2.tools.Server.createTcpServer().start();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -48,7 +50,6 @@ public class DataSourceH2 implements DataSource {
     @Override
     public void setLogWriter(PrintWriter out) {
         throw new UnsupportedOperationException();
-
     }
 
     @Override
