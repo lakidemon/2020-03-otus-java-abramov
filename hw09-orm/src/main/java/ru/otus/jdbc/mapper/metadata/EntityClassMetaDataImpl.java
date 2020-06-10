@@ -68,7 +68,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
         return allowedIdTypes.contains(type);
     }
 
-    private static Set<Class<? extends Number>> allowedIdTypes = Stream.of(int.class, long.class, short.class,
+    private static final Set<Class<? extends Number>> allowedIdTypes = Stream.of(int.class, long.class, short.class,
             byte.class).collect(Collectors.toSet());
 
     private static boolean isApplicableField(Field field) {
