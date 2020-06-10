@@ -1,6 +1,5 @@
 package ru.otus.jdbc.mapper;
 
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -20,8 +19,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class JdbcMapperImpl<T> implements JdbcMapper<T> {
-    @Getter
-    private final Class<T> type;
     private final SessionManager sessionManager;
     private final DbExecutor<T> dbExecutor;
     private final EntityClassMetaData<T> classMetaData;
@@ -92,12 +89,12 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                 } catch (SQLException e) {
                     throw new MapperException("Cannot get column " + f.getName() + " value from ResultSet", e);
                 } catch (IllegalAccessException e) {
-                    throw new MapperException("Cannot set field " + f.getName() + " of type " + type.getName(), e);
+                    throw new MapperException("Cannot set field " + f.getName() + " of type " + object.getClass(), e);
                 }
             });
             return object;
         } catch (ReflectiveOperationException e) {
-            throw new MapperException("Failed to instantiate object " + type.getName(), e);
+            throw new MapperException("Failed to instantiate object", e);
         }
     }
 
@@ -114,7 +111,7 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     public static <T> JdbcMapperImpl<T> forType(Class<T> type, SessionManager manager, DbExecutor<T> executor) {
         var classMetaData = EntityClassMetaDataImpl.create(type);
         var sqlMetaData = EntitySQLMetaDataImpl.createFromClass(classMetaData);
-        var mapper = new JdbcMapperImpl<>(type, manager, executor, classMetaData, sqlMetaData);
+        var mapper = new JdbcMapperImpl<>(manager, executor, classMetaData, sqlMetaData);
 
         log.debug("Name: " + classMetaData.getName());
         log.debug("Select all: " + sqlMetaData.getSelectAllSql());
