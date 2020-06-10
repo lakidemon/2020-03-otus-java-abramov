@@ -23,10 +23,15 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private final Constructor<T> constructor;
     private final Field idField;
     private final List<Field> allFields;
+    private List<Field> fieldsWithoutId;
 
     @Override
     public List<Field> getFieldsWithoutId() {
-        return allFields.stream().filter(Predicate.isEqual(idField).negate()).collect(Collectors.toUnmodifiableList());
+        return fieldsWithoutId == null ?
+                fieldsWithoutId = allFields.stream()
+                        .filter(Predicate.isEqual(idField).negate())
+                        .collect(Collectors.toUnmodifiableList()) :
+                fieldsWithoutId;
     }
 
     public static <T> EntityClassMetaData<T> create(Class<T> type) {
