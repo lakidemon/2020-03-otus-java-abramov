@@ -40,6 +40,8 @@ allprojects {
             dependency "org.junit.jupiter:junit-jupiter:${Deps.junit}"
             dependency "org.glassfish:javax.json:${Deps.gfJson}"
             dependency "com.google.code.gson:gson:${Deps.gson}"
+            dependency "com.h2database:h2:${Deps.h2}"
+            dependency "ch.qos.logback:logback-classic:${Deps.logback}"
         }
     }
 }
