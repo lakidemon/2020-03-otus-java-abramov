@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.core.dao.UserDao;
 import ru.otus.core.model.User;
-import ru.otus.core.sessionmanager.SessionManager;
 
 import java.util.Optional;
 
@@ -49,6 +48,23 @@ public class DbServiceUserImpl implements DBServiceUser {
                 sessionManager.rollbackSession();
             }
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public void updateUser(User user) {
+        try (var sessionManager = userDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+                userDao.updateUser(user);
+                sessionManager.commitSession();
+
+                logger.info("updated user: {}", user.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+                throw new DbServiceException(e);
+            }
         }
     }
 }

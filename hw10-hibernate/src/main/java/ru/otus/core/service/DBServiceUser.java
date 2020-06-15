@@ -9,4 +9,6 @@ public interface DBServiceUser {
     long saveUser(User user);
 
     Optional<User> getUser(long id);
+
+    void updateUser(User user);
 }
