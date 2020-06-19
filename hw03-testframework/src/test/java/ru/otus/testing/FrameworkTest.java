@@ -19,7 +19,7 @@ public class FrameworkTest {
     @DisplayName("должен обнаружить все тесты")
     @Test
     void shouldHaveAllTests() {
-        assertEquals(4, testsContainer.getTests().size());
+        assertEquals(5, testsContainer.getTests().size());
     }
 
     @DisplayName("должен обнаружить все @Before и @After методы")
