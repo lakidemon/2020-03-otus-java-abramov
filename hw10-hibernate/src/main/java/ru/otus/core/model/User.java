@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -23,12 +24,22 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private List<Phone> phones;
 
     public User(String name, int age, Address address, List<Phone> phones) {
-        this(0L, name, age, address, new ArrayList<>(phones));
+        this(0L, name, age, address, new ArrayList<>());
+        setPhones(phones);
+    }
+
+    public void setPhones(Collection<Phone> phones) {
+        this.phones.clear();
+        phones.forEach(this::addPhone);
+    }
+
+    public void addPhone(Phone phone) {
+        phone.setUser(this);
+        phones.add(phone);
     }
 
     @Override

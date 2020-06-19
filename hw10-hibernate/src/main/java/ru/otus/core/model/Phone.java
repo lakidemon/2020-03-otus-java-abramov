@@ -1,11 +1,10 @@
 package ru.otus.core.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -18,6 +17,11 @@ public class Phone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String number;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Phone(String number) {
         this.id = 0;
@@ -25,9 +29,6 @@ public class Phone {
     }
 
     public static List<Phone> single(String phone) {
-        return new ArrayList<Phone>() {
-            {
-                add(new Phone(phone));
-            }};
+        return new ArrayList<>(Collections.singletonList(new Phone(phone)));
     }
 }

@@ -39,10 +39,13 @@ class HibernateTest {
     @Test
     @DisplayName("должен сохранять пользователя корректно(без update-ов)")
     void shouldSaveUserCorrectly() {
+        var stats = stats();
         var user = testUser();
+        user.setPhones(Phone.single("22222"));
+
         assertNotEquals(0, service.saveUser(user));
-        assertEquals(3, stats().getEntityInsertCount());
-        assertEquals(0, stats().getEntityUpdateCount());
+        assertEquals(3, stats.getEntityInsertCount());
+        assertEquals(0, stats.getEntityUpdateCount());
     }
 
     @Test
@@ -65,8 +68,8 @@ class HibernateTest {
         stats.clear();
 
         testUser.getPhones().remove(0);
-        testUser.getPhones().add(new Phone("88001000000"));
-        testUser.getPhones().add(new Phone("+79130000000"));
+        testUser.addPhone(new Phone("88001000000"));
+        testUser.addPhone(new Phone("+79130000000"));
         testUser.setAddress(new Address("Russian Federation"));
         service.updateUser(testUser);
 
