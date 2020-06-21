@@ -5,4 +5,5 @@ public class Deps {
     public static final String gson = "2.8.6";
     public static final String h2 = "1.4.200";
     public static final String logback = "1.2.3";
+    public static final String hibernate = "5.4.17.Final";
 }

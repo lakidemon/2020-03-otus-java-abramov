@@ -22,11 +22,11 @@ public class TestRunner {
             public void onTestFinish(TestResult result) {
                 if (result.isSucceed()) {
                     System.out.print("\r   [P] " + result.getTestName());
-                    System.out.print(" " + result.getRunningTime() + "ms.");
+                    System.out.print(" " + result.getRunningTimeInMillis() + "ms.");
                     System.out.println();
                 } else {
                     System.out.print("\r   [F] " + result.getTestName());
-                    System.out.print(" " + result.getRunningTime() + "ms.");
+                    System.out.print(" " + result.getRunningTimeInMillis() + "ms.");
                     System.out.println();
                     result.getFailure()
                             .printStackTrace(IndentationPrintStream.ERR); // при запуске из идеи коряво отображается
