@@ -1,16 +1,20 @@
 package ru.otus.cachehw;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * @author sergey
  * created on 14.12.18.
  */
 public interface HwCache<K, V> {
 
-    void put(K key, V value);
+    void put(@Nonnull K key, V value);
 
-    void remove(K key);
+    void remove(@Nonnull K key);
 
-    V get(K key);
+    @Nullable
+    V get(@Nonnull K key);
 
     void addListener(HwListener<K, V> listener);
 
