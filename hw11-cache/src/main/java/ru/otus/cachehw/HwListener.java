@@ -8,9 +8,9 @@ import javax.annotation.Nullable;
  * created on 14.12.18.
  */
 public interface HwListener<K, V> {
-    public static final String REMOVE = "REMOVE";
-    public static final String PUT = "PUT";
-    public static final String AUTOREMOVE = "AUTOREMOVE";
+    String REMOVE = "REMOVE";
+    String PUT = "PUT";
+    String GARBAGE_COLLECTED = "GC";
 
     void notify(@Nonnull K key, @Nullable V value, String action);
 }
