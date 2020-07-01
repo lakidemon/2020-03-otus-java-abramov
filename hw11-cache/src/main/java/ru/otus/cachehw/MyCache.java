@@ -18,18 +18,18 @@ public class MyCache<K, V> implements HwCache<K, V> {
     private List<SoftReference<HwListener<K, V>>> listeners = new ArrayList<>();
 
     @Override
-    public void put(@NonNull K key, V value) {
+    public void put(K key, V value) {
         map.put(key, value);
         notifyListeners(key, value, HwListener.PUT);
     }
 
     @Override
-    public void remove(@NonNull K key) {
-        Optional.ofNullable(map.remove(key)).ifPresent(removed -> notifyListeners(key, removed, HwListener.REMOVE));
+    public void remove(K key) {
+        Optional.ofNullable(map.remove(key)).ifPresent(v -> notifyListeners(key, v, HwListener.REMOVE));
     }
 
     @Override
-    public V get(@NonNull K key) {
+    public V get(K key) {
         return map.get(key);
     }
 
