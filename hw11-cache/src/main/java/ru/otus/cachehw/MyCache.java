@@ -14,7 +14,7 @@ import java.util.WeakHashMap;
  */
 @Slf4j
 public class MyCache<K, V> implements HwCache<K, V> {
-    private Map<K, V> map = new MapMaker().weakValues().makeMap();
+    private WeakHashMap<K, V> map = new WeakHashMap<>();
     private List<SoftReference<HwListener<K, V>>> listeners = new ArrayList<>();
 
     @Override
