@@ -1,4 +1,6 @@
 package ru.otus.core.sessionmanager;
 
-public interface DatabaseSession {
+import java.io.Closeable;
+
+public interface DatabaseSession extends Closeable {
 }
