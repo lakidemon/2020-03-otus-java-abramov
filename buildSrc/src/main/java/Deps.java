@@ -6,4 +6,6 @@ public class Deps {
     public static final String h2 = "1.4.200";
     public static final String logback = "1.2.3";
     public static final String hibernate = "5.4.17.Final";
+    public static final String jetty = "9.4.30.v20200611";
+    public static final String freemarker = "2.3.30";
 }
