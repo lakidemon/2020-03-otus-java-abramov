@@ -1,6 +1,7 @@
 package ru.otus.cachehw;
 
 import com.google.common.collect.MapMaker;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,11 +20,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Slf4j
 public class MyCache<K, V> implements HwCache<K, V> {
-    private Map<K, V> map = new MapMaker().weakValues().makeMap();
-    private List<SoftReference<HwListener<K, V>>> listeners = new ArrayList<>();
-    private List<KeyedPhantomReference> valueReferences = new CopyOnWriteArrayList<>();
-    private ReferenceQueue<V> valueQueue = new ReferenceQueue<>();
-    private Thread watcherThread;
+    private final Map<K, V> map = new MapMaker().weakValues().makeMap();
+    private final List<SoftReference<HwListener<K, V>>> listeners = new ArrayList<>();
+    private final List<KeyedPhantomReference> valueReferences = new CopyOnWriteArrayList<>();
+    private final ReferenceQueue<V> valueQueue = new ReferenceQueue<>();
+    @Getter
+    private final Thread watcherThread = new Thread(this::checkQueue);
+    private volatile boolean doWatch = true;
 
     public MyCache() {
         startQueueWatcher();
@@ -56,11 +59,20 @@ public class MyCache<K, V> implements HwCache<K, V> {
         listeners.removeIf(ref -> listener == ref.get());
     }
 
+    public void stopWatch() {
+        doWatch = false;
+        watcherThread.interrupt();
+    }
+
     private void notifyListeners(K key, V value, String action) {
         var it = listeners.iterator();
         while (it.hasNext()) {
-            Optional.ofNullable(it.next().get())
-                    .ifPresentOrElse(l -> notifyListener(l, key, value, action), it::remove);
+            var listener = it.next().get();
+            if (listener != null) {
+                notifyListener(listener, key, value, action);
+            } else {
+                it.remove();
+            }
         }
     }
 
@@ -69,25 +81,25 @@ public class MyCache<K, V> implements HwCache<K, V> {
             listener.notify(key, value, action);
         } catch (Exception e) {
             log.error(String.format("Encountered exception during listener notification! Action: %s; K: %s; V: %s",
-                    action, String.valueOf(key), String.valueOf(value)), e);
+                    action, key, value), e);
         }
     }
 
     private void startQueueWatcher() {
-        watcherThread = new Thread(this::checkQueue);
         watcherThread.setDaemon(true);
         watcherThread.start();
     }
 
     private void checkQueue() {
-        try {
-            while (true) {
+        while (doWatch) {
+            try {
                 var ref = (KeyedPhantomReference) valueQueue.remove();
                 notifyListeners(ref.key, null, HwListener.GARBAGE_COLLECTED);
                 valueReferences.remove(ref);
                 ref.key = null;
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
             }
-        } catch (InterruptedException ignored) {
         }
     }
 
@@ -99,4 +111,5 @@ public class MyCache<K, V> implements HwCache<K, V> {
             this.key = key;
         }
     }
+
 }
