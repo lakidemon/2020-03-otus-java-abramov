@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.otus.core.dao.UserDao;
 import ru.otus.core.model.User;
 
+import javax.inject.Inject;
 import java.util.Optional;
 
 public class DbServiceUserImpl implements DBServiceUser {
@@ -12,6 +13,7 @@ public class DbServiceUserImpl implements DBServiceUser {
 
     private final UserDao userDao;
 
+    @Inject
     public DbServiceUserImpl(UserDao userDao) {
         this.userDao = userDao;
     }
