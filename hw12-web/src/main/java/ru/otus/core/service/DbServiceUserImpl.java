@@ -6,8 +6,10 @@ import ru.otus.core.dao.UserDao;
 import ru.otus.core.model.User;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Optional;
 
+@Singleton
 public class DbServiceUserImpl implements DBServiceUser {
     private static final Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);
 

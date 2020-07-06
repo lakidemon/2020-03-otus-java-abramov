@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 import ru.otus.core.sessionmanager.SessionManager;
 import ru.otus.core.sessionmanager.SessionManagerException;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__({ @Inject }))
 public class SessionManagerHibernate implements SessionManager {
     @Getter
     private final EntityManagerFactory sessionFactory;

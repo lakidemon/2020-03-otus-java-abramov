@@ -6,10 +6,11 @@ import ru.otus.core.dao.UserDao;
 import ru.otus.core.model.User;
 import ru.otus.hibernate.sessionmanager.SessionManagerHibernate;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__({ @Inject }))
 public class UserDaoHibernate implements UserDao {
     @Getter
     private final SessionManagerHibernate sessionManager;
