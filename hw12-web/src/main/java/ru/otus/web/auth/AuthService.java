@@ -1,9 +1,13 @@
 package ru.otus.web.auth;
 
+import org.eclipse.jetty.security.AbstractLoginService;
+
+import java.util.Optional;
+
 public interface AuthService {
 
-    boolean authenticate(String username, String password);
+    Optional<AbstractLoginService.UserPrincipal> authenticate(String username, String password);
 
-    void addUser(String name, String password);
+    AbstractLoginService.UserPrincipal addUser(String name, String password);
 
 }
