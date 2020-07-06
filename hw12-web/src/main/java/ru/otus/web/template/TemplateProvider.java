@@ -5,6 +5,15 @@ import java.util.Map;
 
 public interface TemplateProvider {
 
-    void renderPage(String view, Map<String, Object> model, PrintWriter output);
+    void setup(String templatesFolder);
 
+    View getView(String view);
+
+    interface View {
+        void render(Map<String, Object> model, PrintWriter to);
+
+        default void render(PrintWriter to) {
+            render(null, to);
+        }
+    }
 }
