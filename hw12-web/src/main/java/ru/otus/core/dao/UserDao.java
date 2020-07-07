@@ -3,6 +3,7 @@ package ru.otus.core.dao;
 import ru.otus.core.model.User;
 import ru.otus.core.sessionmanager.SessionManager;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface UserDao {
@@ -13,6 +14,8 @@ public interface UserDao {
     void updateUser(User user);
 
     void insertOrUpdate(User user);
+
+    Collection<User> findAll();
 
     SessionManager getSessionManager();
 }

@@ -8,6 +8,7 @@ import ru.otus.hibernate.sessionmanager.SessionManagerHibernate;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.util.Collection;
 import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor = @__({ @Inject }))
@@ -38,6 +39,11 @@ public class UserDaoHibernate implements UserDao {
         } else {
             getSession().persist(user);
         }
+    }
+
+    @Override
+    public Collection<User> findAll() {
+        return getSession().createQuery("SELECT u FROM User u").getResultList();
     }
 
     private EntityManager getSession() {

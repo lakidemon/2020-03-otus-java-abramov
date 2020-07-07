@@ -1,5 +1,6 @@
 package ru.otus.core.service;
 
+import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.core.dao.UserDao;
@@ -7,6 +8,7 @@ import ru.otus.core.model.User;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Collection;
 import java.util.Optional;
 
 @Singleton
@@ -69,6 +71,17 @@ public class DbServiceUserImpl implements DBServiceUser {
                 sessionManager.rollbackSession();
                 throw new DbServiceException(e);
             }
+        }
+    }
+
+    @Override
+    public Collection<User> getAll() {
+        try (var sessionManager = userDao.getSessionManager()) {
+            sessionManager.beginSession();
+            return ImmutableList.copyOf(userDao.findAll());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new DbServiceException(e);
         }
     }
 }
