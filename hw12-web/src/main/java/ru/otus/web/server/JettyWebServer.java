@@ -10,6 +10,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import ru.otus.core.dao.UserDao;
+import ru.otus.core.model.Address;
+import ru.otus.core.model.Phone;
+import ru.otus.core.model.User;
 import ru.otus.core.service.DBServiceUser;
 import ru.otus.core.service.DbServiceUserImpl;
 import ru.otus.core.sessionmanager.SessionManager;
@@ -30,6 +33,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
 
 @RequiredArgsConstructor
 public class JettyWebServer extends ServletModule implements WebServer {
@@ -49,9 +54,10 @@ public class JettyWebServer extends ServletModule implements WebServer {
         server.setHandler(context);
     }
 
-    protected void configureDependencies() {
-        injector.getInstance(TemplateProvider.class).setup("/templates/");
-        injector.getInstance(AuthService.class).addUser("test", "pass");
+    private void setupGuice(ServletContextHandler context) {
+        injector = Guice.createInjector(this);
+        context.addEventListener(new InternalGuiceServletContextListener());
+        context.addFilter(GuiceFilter.class, "/*", null);
     }
 
     @Override
@@ -60,18 +66,6 @@ public class JettyWebServer extends ServletModule implements WebServer {
         addServlets();
         addFilters();
         setupStaticContent();
-    }
-
-    public static void main(String[] args) throws Exception {
-        var server = new JettyWebServer(8080);
-        server.init();
-        server.start();
-    }
-
-    private void setupGuice(ServletContextHandler context) {
-        injector = Guice.createInjector(this);
-        context.addEventListener(new InternalGuiceServletContextListener());
-        context.addFilter(GuiceFilter.class, "/*", null);
     }
 
     protected void setupBindings() {
@@ -83,15 +77,15 @@ public class JettyWebServer extends ServletModule implements WebServer {
         bind(DBServiceUser.class).to(DbServiceUserImpl.class);
     }
 
-    protected void addFilters() {
-        filter("/*").through(CharsetFilter.class);
-        filter("/*").through(LoginFilter.class, Map.of("excludedPaths", "/static/*,/logout,/favicon.ico"));
-    }
-
     protected void addServlets() {
         serve("/login").with(LoginServlet.class);
         serve("/logout").with(LogoutServlet.class);
         serve("/").with(UsersServlet.class);
+    }
+
+    protected void addFilters() {
+        filter("/*").through(CharsetFilter.class);
+        filter("/*").through(LoginFilter.class, Map.of("excludedPaths", "/static/*,/logout,/favicon.ico"));
     }
 
     protected void setupStaticContent() {
@@ -100,6 +94,20 @@ public class JettyWebServer extends ServletModule implements WebServer {
         initParams.put("dirAllowed", "false");
         initParams.put("resourceBase", FileSystemHelper.localFileNameOrResourceNameToFullPath("static"));
         serve("/static/*").with(new DefaultServlet(), initParams);
+    }
+
+    protected void configureDependencies() {
+        injector.getInstance(TemplateProvider.class).setup("/templates/");
+        injector.getInstance(AuthService.class).addUser("test", "pass");
+
+        var userService = injector.getInstance(DBServiceUser.class);
+        var random = ThreadLocalRandom.current();
+        for (String name : new String[] { "Вася", "Петя", "Катя", "Володя", "Иннокентий", "Авдотья" }) {
+            var addresses = TimeZone.getAvailableIDs();
+            var user = new User(name, random.nextInt(12, 70), new Address(addresses[random.nextInt(addresses.length)]),
+                    Phone.single(String.valueOf(random.nextLong(89000000000L, 89500000000L))));
+            userService.saveUser(user);
+        }
     }
 
     @Override
