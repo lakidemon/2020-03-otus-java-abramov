@@ -85,7 +85,7 @@ public class JettyWebServer extends ServletModule implements WebServer {
 
     protected void addFilters() {
         filter("/*").through(CharsetFilter.class);
-        filter("/*").through(LoginFilter.class, Map.of("excludedPaths", "/static/*"));
+        filter("/*").through(LoginFilter.class, Map.of("excludedPaths", "/static/*,/logout,/favicon.ico"));
     }
 
     protected void addServlets() {
