@@ -2,17 +2,16 @@ plugins {
     id 'java'
 }
 
-sourceCompatibility = JavaVersion.VERSION_13
-targetCompatibility = JavaVersion.VERSION_13
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 dependencies {
-    implementation("org.reflections:reflections:${Versions.reflections}")
+    implementation "net.oneandone.reflections8:reflections8:${Deps.reflections}"
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter'
 }
 
-compileJava.options.encoding = 'UTF-8'
-
-tasks.withType(JavaCompile) {
-    options.with {
-        encoding = 'UTF-8'
-    }
+test {
+    useJUnitPlatform()
 }
