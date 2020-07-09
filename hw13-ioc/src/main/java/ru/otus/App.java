@@ -16,7 +16,7 @@ PS Приложение представляет из себя тренажер 
 public class App {
 
     public static void main(String[] args) throws Exception {
-        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class);
+        AppComponentsContainer container = new AppComponentsContainerImpl(App.class.getPackageName());
         GameProcessor gameProcessor = container.getAppComponent(GameProcessor.class);
         gameProcessor.startGame();
     }
