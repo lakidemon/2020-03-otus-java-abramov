@@ -1,6 +1,10 @@
 package ru.otus.core.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
+import ru.otus.codec.PhoneDeserializer;
+import ru.otus.codec.PhoneSerializer;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +16,8 @@ import java.util.List;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonDeserialize(using = PhoneDeserializer.class)
+@JsonSerialize(using = PhoneSerializer.class)
 public class Phone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

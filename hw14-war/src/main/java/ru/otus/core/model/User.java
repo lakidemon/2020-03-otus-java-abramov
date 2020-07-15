@@ -1,5 +1,6 @@
 package ru.otus.core.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Iterables;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.util.List;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(value = { "id" })
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +27,7 @@ public class User {
     @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
-    private List<Phone> phones;
+    private List<Phone> phones = new ArrayList<>();
 
     public User(String name, int age, Address address, List<Phone> phones) {
         this(0L, name, age, address, new ArrayList<>());

@@ -1,8 +1,10 @@
 package ru.otus.core.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.codec.AddressSerializer;
 
 import javax.persistence.*;
 
@@ -11,6 +13,7 @@ import javax.persistence.*;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonSerialize(using = AddressSerializer.class)
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
