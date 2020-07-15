@@ -7,10 +7,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.core.dao.UserDao;
+import ru.otus.core.model.Address;
+import ru.otus.core.model.Phone;
 import ru.otus.core.model.User;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__({ @Autowired }))
@@ -79,6 +86,35 @@ public class DbServiceUserImpl implements DBServiceUser {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new DbServiceException(e);
+        }
+    }
+
+    @Override
+    public Optional<User> getRandom() {
+        try (var sessionManager = userDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+                return userDao.findAny();
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+            }
+            return Optional.empty();
+        }
+    }
+
+    @PostConstruct
+    private void addTestUsers() {
+        var random = ThreadLocalRandom.current();
+        for (String name : new String[] { "Вася", "Петя", "Катя", "Володя", "Иннокентий", "Авдотья" }) {
+            var addresses = TimeZone.getAvailableIDs();
+            var phones = IntStream.range(0, random.nextInt(1, 4))
+                    .mapToObj(i -> String.valueOf(random.nextLong(89000000000L, 89500000000L)))
+                    .map(Phone::new)
+                    .collect(Collectors.toList());
+            var user = new User(name, random.nextInt(12, 70), new Address(addresses[random.nextInt(addresses.length)]),
+                    phones);
+            saveUser(user);
         }
     }
 }

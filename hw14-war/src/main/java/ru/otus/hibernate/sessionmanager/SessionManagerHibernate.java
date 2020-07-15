@@ -47,12 +47,13 @@ public class SessionManagerHibernate implements SessionManager {
 
     @Override
     public void close() {
-        checkSession();
-        try {
-            session.close();
-            session = null;
-        } catch (Exception e) {
-            throw new SessionManagerException(e);
+        if (session != null) {
+            try {
+                session.close();
+                session = null;
+            } catch (Exception e) {
+                throw new SessionManagerException(e);
+            }
         }
     }
 

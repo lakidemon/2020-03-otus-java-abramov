@@ -17,5 +17,7 @@ public interface UserDao {
 
     Collection<User> findAll();
 
+    Optional<User> findAny();
+
     SessionManager getSessionManager();
 }

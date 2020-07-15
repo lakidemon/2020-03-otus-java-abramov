@@ -14,4 +14,6 @@ public interface DBServiceUser {
     void updateUser(User user);
 
     Collection<User> getAll();
+
+    Optional<User> getRandom();
 }

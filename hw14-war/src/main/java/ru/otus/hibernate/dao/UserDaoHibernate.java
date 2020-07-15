@@ -48,6 +48,13 @@ public class UserDaoHibernate implements UserDao {
         return getSession().createQuery("SELECT u FROM User u").getResultList();
     }
 
+    @Override
+    public Optional<User> findAny() {
+        return Optional.ofNullable((User) getSession().createQuery("SELECT u FROM User u ORDER BY rand()")
+                .setMaxResults(1)
+                .getSingleResult());
+    }
+
     private EntityManager getSession() {
         return sessionManager.getCurrentSession().getSession();
     }
