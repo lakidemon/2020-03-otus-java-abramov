@@ -1,4 +1,4 @@
-package ru.otus.core.service;
+package ru.otus.service;
 
 import com.google.common.collect.ImmutableList;
 import lombok.RequiredArgsConstructor;
@@ -6,10 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.otus.core.dao.UserDao;
-import ru.otus.core.model.Address;
-import ru.otus.core.model.Phone;
-import ru.otus.core.model.User;
+import ru.otus.dao.UserDao;
+import ru.otus.model.Address;
+import ru.otus.model.Phone;
+import ru.otus.model.User;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;

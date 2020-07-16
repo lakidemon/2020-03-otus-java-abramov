@@ -1,4 +1,4 @@
-package ru.otus.core.model;
+package ru.otus.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Iterables;

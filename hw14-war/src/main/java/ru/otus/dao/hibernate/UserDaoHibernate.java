@@ -1,12 +1,12 @@
-package ru.otus.hibernate.dao;
+package ru.otus.dao.hibernate;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.otus.core.dao.UserDao;
-import ru.otus.core.model.User;
-import ru.otus.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.otus.dao.UserDao;
+import ru.otus.model.User;
+import ru.otus.sessionmanager.hibernate.SessionManagerHibernate;
 
 import javax.persistence.EntityManager;
 import java.util.Collection;

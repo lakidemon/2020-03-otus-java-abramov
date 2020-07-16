@@ -2,9 +2,9 @@ package ru.otus.codec;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import ru.otus.core.model.Address;
-import ru.otus.core.model.Phone;
-import ru.otus.core.model.User;
+import ru.otus.model.Address;
+import ru.otus.model.Phone;
+import ru.otus.model.User;
 
 import java.util.List;
 

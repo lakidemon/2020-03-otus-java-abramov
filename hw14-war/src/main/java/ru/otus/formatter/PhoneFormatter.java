@@ -1,7 +1,7 @@
 package ru.otus.formatter;
 
 import org.springframework.format.Formatter;
-import ru.otus.core.model.Phone;
+import ru.otus.model.Phone;
 
 import java.text.ParseException;
 import java.util.Locale;

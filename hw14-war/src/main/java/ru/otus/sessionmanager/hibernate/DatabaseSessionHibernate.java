@@ -1,7 +1,7 @@
-package ru.otus.hibernate.sessionmanager;
+package ru.otus.sessionmanager.hibernate;
 
 import lombok.Getter;
-import ru.otus.core.sessionmanager.DatabaseSession;
+import ru.otus.sessionmanager.DatabaseSession;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;

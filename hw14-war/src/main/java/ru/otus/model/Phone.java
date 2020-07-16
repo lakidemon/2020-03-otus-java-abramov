@@ -1,4 +1,4 @@
-package ru.otus.core.model;
+package ru.otus.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

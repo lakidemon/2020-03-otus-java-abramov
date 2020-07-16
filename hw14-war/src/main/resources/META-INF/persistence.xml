@@ -4,9 +4,9 @@
 
     <persistence-unit name="otus-hibernate">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>ru.otus.core.model.User</class>
-        <class>ru.otus.core.model.Address</class>
-        <class>ru.otus.core.model.Phone</class>
+        <class>ru.otus.model.User</class>
+        <class>ru.otus.model.Address</class>
+        <class>ru.otus.model.Phone</class>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>

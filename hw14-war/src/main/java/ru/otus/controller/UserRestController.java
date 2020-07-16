@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.otus.core.model.User;
-import ru.otus.core.service.DBServiceUser;
+import ru.otus.model.User;
+import ru.otus.service.DBServiceUser;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))

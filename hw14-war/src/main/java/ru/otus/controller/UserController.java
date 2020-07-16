@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import ru.otus.core.model.User;
-import ru.otus.core.service.DBServiceUser;
+import ru.otus.model.User;
+import ru.otus.service.DBServiceUser;
 
 import java.util.Collection;
 

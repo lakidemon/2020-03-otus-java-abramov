@@ -1,10 +1,10 @@
-package ru.otus.hibernate.sessionmanager;
+package ru.otus.sessionmanager.hibernate;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.otus.core.sessionmanager.SessionManager;
-import ru.otus.core.sessionmanager.SessionManagerException;
+import ru.otus.sessionmanager.SessionManager;
+import ru.otus.sessionmanager.SessionManagerException;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
