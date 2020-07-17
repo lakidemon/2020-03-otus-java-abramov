@@ -22,7 +22,7 @@
 
     <h3>Добавить пользователя</h3>
     <div class="card" style="width: 18rem;">
-        <form id="add-form" method="post">
+        <form id="add-form" onsubmit="submitForm(this,event);">
             <input name="name" type="text" id="name" class="form-control" placeholder="Имя" required autofocus>
             <input name="age" type="number" id="age" class="form-control" placeholder="Возраст" required>
             <input name="address" type="text" id="address" class="form-control" placeholder="Адрес" required>
@@ -32,7 +32,7 @@
                     <button class="btn btn-outline-secondary" type="button" onclick="addPhone()">+</button>
                 </div>
             </div>
-            <button id="submit-button" class="btn btn-lg btn-primary btn-block" type="submit">Добавить</button>
+            <button id="submit-user" class="btn btn-lg btn-primary btn-block" type="submit">Добавить</button>
         </form>
     </div>
     <h3>Список пользователей</h3>
@@ -56,19 +56,29 @@
         </tr>
         </tbody>
     </table>
+    <h3>Поиск пользователей</h3>
+    <div class="card" style="width: 18rem;">
+        <form id="find-user" onsubmit="findUser(this, event);">
+            <input name="userId" type="number" id="userId" class="form-control" placeholder="ID" required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Найти по ID</button>
+        </form>
+        <br>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="findUser(null)">Случайный пользователь
+        </button>
+        <br>
+        <div id="findResult"></div>
+    </div>
 </div> <!-- /container -->
 <script th:inline="javascript">
     function addPhone() {
         var phoneClone = $('#phone').clone();
         phoneClone.val('');
-        $('#submit-button').before(phoneClone);
+        $('#submit-user').before(phoneClone);
     }
 
-    $('#add-form').on('submit', submitForm);
-
-    function submitForm(e) {
-        e.preventDefault();
-        let formJson = JSON.stringify($('#add-form').serializeJSON());
+    function submitForm(form, event) {
+        event.preventDefault();
+        let formJson = JSON.stringify($(form).serializeJSON());
         $.ajax({
             type: 'POST',
             url: '[(@{/api/users})]',
@@ -76,6 +86,32 @@
             contentType: 'application/json; charset=utf-8',
             success: function () {
                 document.location.reload();
+            }
+        });
+    }
+
+    function findUser(form, event) {
+        let id;
+        if (form) {
+            event.preventDefault();
+            id = $(form.userId).val();
+        } else {
+            id = 'random';
+        }
+
+        let result = $('#findResult');
+        result.empty();
+
+        $.get(`[(@{/api/users})]/${id}`).done(function (data) {
+            result.append(`<p>Имя: ${data['name']}</p>`);
+            result.append(`<p>Возраст: ${data['age']}</p>`);
+            result.append(`<p>Адрес: ${data['address']}</p>`);
+            result.append(`<p>Телефон: ${data['phones'].join(', ')}</p>`);
+        }).fail(function (jqXHR) {
+            if (jqXHR.status == 404) {
+                result.append('<p>Ничего не найдено</p>');
+            } else {
+                alert('Произошла ошибка');
             }
         });
     }
