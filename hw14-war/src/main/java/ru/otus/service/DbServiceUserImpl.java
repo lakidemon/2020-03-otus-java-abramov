@@ -95,18 +95,4 @@ public class DbServiceUserImpl implements DBServiceUser {
         }
     }
 
-    @PostConstruct
-    private void addTestUsers() {
-        var random = ThreadLocalRandom.current();
-        for (String name : new String[] { "Вася", "Петя", "Катя", "Володя", "Иннокентий", "Авдотья" }) {
-            var addresses = TimeZone.getAvailableIDs();
-            var phones = IntStream.range(0, random.nextInt(1, 4))
-                    .mapToObj(i -> String.valueOf(random.nextLong(89000000000L, 89500000000L)))
-                    .map(Phone::new)
-                    .collect(Collectors.toList());
-            var user = new User(name, random.nextInt(12, 70), new Address(addresses[random.nextInt(addresses.length)]),
-                    phones);
-            saveUser(user);
-        }
-    }
 }
