@@ -36,7 +36,6 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     protected DispatcherServlet createDispatcherServlet(WebApplicationContext servletAppContext) {
         final DispatcherServlet dispatcherServlet = (DispatcherServlet) super.createDispatcherServlet(
                 servletAppContext);
-
         dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
         return dispatcherServlet;
     }

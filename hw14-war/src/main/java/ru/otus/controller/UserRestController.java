@@ -1,14 +1,13 @@
 package ru.otus.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.model.User;
 import ru.otus.service.DBServiceUser;
 
 @RestController
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserRestController {
     private final DBServiceUser userService;
 

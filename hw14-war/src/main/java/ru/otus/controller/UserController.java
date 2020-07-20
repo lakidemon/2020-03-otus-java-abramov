@@ -1,7 +1,6 @@
 package ru.otus.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,7 +10,7 @@ import ru.otus.service.DBServiceUser;
 import java.util.Collection;
 
 @Controller
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserController {
     private final DBServiceUser userService;
 

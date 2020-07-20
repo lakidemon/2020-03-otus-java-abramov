@@ -4,23 +4,15 @@ import com.google.common.collect.ImmutableList;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.dao.UserDao;
-import ru.otus.model.Address;
-import ru.otus.model.Phone;
 import ru.otus.model.User;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.TimeZone;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__({ @Autowired }))
+@RequiredArgsConstructor
 public class DbServiceUserImpl implements DBServiceUser {
     private static final Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);
 

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.otus.dao.UserDao;
 import ru.otus.model.User;
 import ru.otus.sessionmanager.hibernate.SessionManagerHibernate;
@@ -12,8 +13,8 @@ import javax.persistence.EntityManager;
 import java.util.Collection;
 import java.util.Optional;
 
-@Component
-@RequiredArgsConstructor(onConstructor = @__({ @Autowired }))
+@Repository
+@RequiredArgsConstructor
 public class UserDaoHibernate implements UserDao {
     @Getter
     private final SessionManagerHibernate sessionManager;
@@ -45,12 +46,12 @@ public class UserDaoHibernate implements UserDao {
 
     @Override
     public Collection<User> findAll() {
-        return getSession().createQuery("SELECT u FROM User u").getResultList();
+        return getSession().createQuery("SELECT u FROM User u", User.class).getResultList();
     }
 
     @Override
     public Optional<User> findAny() {
-        return Optional.ofNullable((User) getSession().createQuery("SELECT u FROM User u ORDER BY rand()")
+        return Optional.ofNullable(getSession().createQuery("SELECT u FROM User u ORDER BY rand()", User.class)
                 .setMaxResults(1)
                 .getSingleResult());
     }
