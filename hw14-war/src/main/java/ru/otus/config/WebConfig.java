@@ -9,6 +9,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
@@ -56,6 +57,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/WEB-INF/static/")
                 .setCacheControl(CacheControl.noCache());
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("index");
     }
 
     @Override
