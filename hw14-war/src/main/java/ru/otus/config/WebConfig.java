@@ -16,6 +16,9 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import ru.otus.formatter.PhoneFormatter;
+import ru.otus.service.DBServiceUser;
+import ru.otus.service.DefaultUserPopulatorService;
+import ru.otus.service.UserPopulatorService;
 
 @Configuration
 @EnableWebMvc
@@ -72,5 +75,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public PhoneFormatter phoneFormatter() {
         return new PhoneFormatter();
+    }
+
+    @Bean(initMethod = "init")
+    public UserPopulatorService populatorService(DBServiceUser serviceUser) {
+        return new DefaultUserPopulatorService(serviceUser);
     }
 }

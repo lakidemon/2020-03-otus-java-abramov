@@ -1,9 +1,8 @@
 package ru.otus.service;
 
-import org.springframework.beans.factory.InitializingBean;
-
-public interface UserPopulatorService extends InitializingBean {
+public interface UserPopulatorService {
 
     void populate(DBServiceUser userService);
 
+    void init();
 }

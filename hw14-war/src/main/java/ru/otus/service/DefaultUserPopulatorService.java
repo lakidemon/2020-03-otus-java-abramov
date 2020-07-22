@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class DefaultUserPopulatorService implements UserPopulatorService {
-    private final DBServiceUser userService;
+    private final DBServiceUser serviceUser;
 
     @Override
     public void populate(DBServiceUser userService) {
@@ -32,7 +32,7 @@ public class DefaultUserPopulatorService implements UserPopulatorService {
     }
 
     @Override
-    public void afterPropertiesSet() {
-        populate(userService);
+    public void init() {
+        populate(serviceUser);
     }
 }
