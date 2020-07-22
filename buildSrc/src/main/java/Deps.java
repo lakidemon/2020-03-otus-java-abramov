@@ -9,4 +9,5 @@ public class Deps {
     public static final String hibernate = "5.4.17.Final";
     public static final String jetty = "9.4.30.v20200611";
     public static final String freemarker = "2.3.30";
+    public static final String reflections = "0.11.5";
 }
