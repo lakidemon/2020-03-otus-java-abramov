@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Панель управления пользователями</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/static/css/users.css}" rel="stylesheet">
+
+    <script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery.serializejson.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/bootstrap.js}"></script>
+</head>
+
+<body>
+<div class="container">
+
+    <h3>Добавить пользователя</h3>
+    <div class="card" style="width: 18rem;">
+        <form id="add-form" onsubmit="submitForm(this,event);">
+            <input name="name" type="text" id="name" class="form-control" placeholder="Имя" required autofocus>
+            <input name="age" type="number" id="age" class="form-control" placeholder="Возраст" required>
+            <input name="address" type="text" id="address" class="form-control" placeholder="Адрес" required>
+            <div class="input-group">
+                <input name="phones[]" type="tel" id="phone" class="form-control" placeholder="Телефон" required>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" onclick="addPhone()">+</button>
+                </div>
+            </div>
+            <button id="submit-user" class="btn btn-lg btn-primary btn-block" type="submit">Добавить</button>
+        </form>
+    </div>
+    <h3>Список пользователей</h3>
+    <table class="table table-light">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Возраст</th>
+            <th scope="col">Адрес</th>
+            <th scope="col">Телефон</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${allUsers}">
+            <th scope="row" th:text="${user.id}"></th>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.age}"></td>
+            <td th:text="${user.address.street}"></td>
+            <td th:text="${#strings.listJoin(#conversions.convert(user.phones, 'String'), ', ')}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <h3>Поиск пользователей</h3>
+    <div class="card" style="width: 18rem;">
+        <form id="find-user" onsubmit="findUser(this, event);">
+            <input name="userId" type="number" id="userId" class="form-control" placeholder="ID" required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Найти по ID</button>
+        </form>
+        <br>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="findUser(null)">Случайный пользователь
+        </button>
+        <br>
+        <div id="findResult"></div>
+    </div>
+</div> <!-- /container -->
+<script th:inline="javascript">
+    function addPhone() {
+        var phoneClone = $('#phone').clone();
+        phoneClone.val('');
+        $('#submit-user').before(phoneClone);
+    }
+
+    function submitForm(form, event) {
+        event.preventDefault();
+        let formJson = JSON.stringify($(form).serializeJSON());
+        $.ajax({
+            type: 'POST',
+            url: '[(@{/api/users})]',
+            data: formJson,
+            contentType: 'application/json; charset=utf-8',
+            success: function () {
+                document.location.reload();
+            }
+        });
+    }
+
+    function findUser(form, event) {
+        let id;
+        if (form) {
+            event.preventDefault();
+            id = $(form.userId).val();
+        } else {
+            id = 'random';
+        }
+
+        let result = $('#findResult');
+        result.empty();
+
+        $.get(`[(@{/api/users})]/${id}`).done(function (data) {
+            result.append(`<p>Имя: ${data['name']}</p>`);
+            result.append(`<p>Возраст: ${data['age']}</p>`);
+            result.append(`<p>Адрес: ${data['address']}</p>`);
+            result.append(`<p>Телефон: ${data['phones'].join(', ')}</p>`);
+        }).fail(function (jqXHR) {
+            if (jqXHR.status == 404) {
+                result.append('<p>Ничего не найдено</p>');
+            } else {
+                alert('Произошла ошибка');
+            }
+        });
+    }
+</script>
+</body>
+</html>
