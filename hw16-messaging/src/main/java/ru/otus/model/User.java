@@ -5,11 +5,13 @@ import com.google.common.collect.Iterables;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.dto.UserDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -42,6 +44,11 @@ public class User {
     public void addPhone(Phone phone) {
         phone.setUser(this);
         phones.add(phone);
+    }
+
+    public UserDto toDto() {
+        return new UserDto(id, name, age, address.getStreet(),
+                phones.stream().map(Phone::getNumber).collect(Collectors.toList()));
     }
 
     @Override
