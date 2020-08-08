@@ -20,7 +20,7 @@ public class MsClientImpl implements MsClient {
     private final CallbackRegistry callbackRegistry;
 
     public MsClientImpl(String name, MessageSystem messageSystem, HandlersStore handlersStore,
-                        CallbackRegistry callbackRegistry) {
+            CallbackRegistry callbackRegistry) {
         this.name = name;
         this.messageSystem = messageSystem;
         this.handlersStore = handlersStore;
@@ -59,16 +59,20 @@ public class MsClientImpl implements MsClient {
 
     @Override
     public <T extends ResultDataType> Message produceMessage(String to, T data, MessageType msgType,
-                                                                MessageCallback<T> callback) {
+            MessageCallback<T> callback) {
         Message message = MessageBuilder.buildMessage(name, to, null, data, msgType);
-        callbackRegistry.put(message.getCallbackId(), callback);
+        if (callback != null) {
+            callbackRegistry.put(message.getCallbackId(), callback);
+        }
         return message;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         MsClientImpl msClient = (MsClientImpl) o;
         return Objects.equals(name, msClient.name);
     }
