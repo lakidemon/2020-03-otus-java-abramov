@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.handlers;
 
 import lombok.RequiredArgsConstructor;
 import ru.otus.messagesystem.message.MessageType;
