@@ -9,7 +9,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import ru.otus.UserMessageType;
+import ru.otus.handlers.UserMessageType;
 import ru.otus.config.AppConfig;
 import ru.otus.dto.UserDto;
 import ru.otus.dto.UserListDto;
