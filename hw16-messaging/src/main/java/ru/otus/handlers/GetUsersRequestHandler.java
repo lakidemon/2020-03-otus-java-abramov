@@ -13,7 +13,6 @@ import ru.otus.service.DBServiceUser;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class GetUsersRequestHandler implements RequestHandler<UserListDto> {

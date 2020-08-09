@@ -2,7 +2,6 @@ package ru.otus.handlers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import ru.otus.messagesystem.RequestHandler;
 import ru.otus.messagesystem.client.CallbackRegistry;
 import ru.otus.messagesystem.message.Message;
@@ -10,7 +9,6 @@ import ru.otus.messagesystem.message.MessageHelper;
 
 import java.util.Optional;
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class UsersResponseHandler implements RequestHandler {

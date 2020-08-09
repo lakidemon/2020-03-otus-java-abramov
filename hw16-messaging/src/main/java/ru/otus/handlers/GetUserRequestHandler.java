@@ -11,7 +11,6 @@ import ru.otus.service.DBServiceUser;
 
 import java.util.Optional;
 
-@Component
 @RequiredArgsConstructor
 public class GetUserRequestHandler implements RequestHandler<UserDto> {
     private final DBServiceUser dbServiceUser;

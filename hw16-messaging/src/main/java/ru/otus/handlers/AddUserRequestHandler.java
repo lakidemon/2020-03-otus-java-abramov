@@ -2,7 +2,6 @@ package ru.otus.handlers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import ru.otus.dto.UserDto;
 import ru.otus.messagesystem.RequestHandler;
 import ru.otus.messagesystem.message.Message;
@@ -14,7 +13,6 @@ import ru.otus.service.DbServiceException;
 
 import java.util.Optional;
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class AddUserRequestHandler implements RequestHandler<UserDto> {
