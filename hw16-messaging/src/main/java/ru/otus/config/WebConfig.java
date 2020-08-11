@@ -41,8 +41,4 @@ public class WebConfig implements WebMvcConfigurer {
         return new PhoneFormatter();
     }
 
-    @Bean(initMethod = "init")
-    public UserPopulatorService populatorService(DBServiceUser serviceUser) {
-        return new DefaultUserPopulatorService(serviceUser);
-    }
 }

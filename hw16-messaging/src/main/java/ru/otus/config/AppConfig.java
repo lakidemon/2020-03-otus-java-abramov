@@ -13,6 +13,8 @@ import ru.otus.messagesystem.client.CallbackRegistryImpl;
 import ru.otus.messagesystem.client.MsClient;
 import ru.otus.messagesystem.client.MsClientImpl;
 import ru.otus.service.DBServiceUser;
+import ru.otus.service.DefaultUserPopulatorService;
+import ru.otus.service.UserPopulatorService;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -63,5 +65,10 @@ public class AppConfig {
     @Scope("prototype")
     HandlersStore handlersStore() {
         return new HandlersStoreImpl();
+    }
+
+    @Bean(initMethod = "init")
+    public UserPopulatorService populatorService(DBServiceUser serviceUser) {
+        return new DefaultUserPopulatorService(serviceUser);
     }
 }
