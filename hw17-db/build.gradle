@@ -1,0 +1,35 @@
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' version '2.3.2.RELEASE'
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+group 'ru.otus'
+version 'unspecified'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api project(':hw17-msnetworking')
+    api project(':hw17-shared')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.hibernate:hibernate-core'
+    implementation 'com.google.guava:guava'
+    implementation 'com.h2database:h2'
+}
+
+task bootRunSecond {
+    group 'Application'
+    doLast { bootRun { systemProperty "network-name", "db2" } }
+}
+bootRunSecond.finalizedBy bootRun
+
+test {
+    useJUnitPlatform()
+}

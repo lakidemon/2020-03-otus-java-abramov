@@ -1,0 +1,39 @@
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' version '2.3.2.RELEASE'
+    id 'edu.umich.med.michr.h2-plugin' version '0.1.1-SNAPSHOT'
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+generateLombokConfig.enabled = false
+
+group 'ru.otus'
+version 'unspecified'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api project(':hw17-msnetworking')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'com.google.guava:guava'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+}
+
+bootRun {
+    dependsOn 'startH2'
+    finalizedBy 'stopH2'
+}
+
+test {
+    useJUnitPlatform()
+}

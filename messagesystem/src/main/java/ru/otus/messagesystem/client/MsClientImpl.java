@@ -1,5 +1,6 @@
 package ru.otus.messagesystem.client;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.messagesystem.HandlersStore;
@@ -16,6 +17,7 @@ public class MsClientImpl implements MsClient {
 
     private final String name;
     private final MessageSystem messageSystem;
+    @Getter
     private final HandlersStore handlersStore;
     private final CallbackRegistry callbackRegistry;
 

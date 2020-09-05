@@ -11,7 +11,7 @@ class Serializers {
 
     static byte[] serialize(Object data) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ObjectOutputStream os = new ObjectOutputStream(baos)) {
+                ObjectOutputStream os = new ObjectOutputStream(baos)) {
             os.writeObject(data);
             os.flush();
             return baos.toByteArray();
@@ -22,10 +22,10 @@ class Serializers {
 
     static Object deserialize(byte[] data) {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
-             ObjectInputStream is = new ObjectInputStream(bis)) {
+                ObjectInputStream is = new ObjectInputStream(bis)) {
             return is.readObject();
         } catch (Exception e) {
-            throw new SerializerError("DeSerialization error", e);
+            throw new SerializerError("DeSerialization error of " + data.length + " bytes", e);
         }
     }
 }
