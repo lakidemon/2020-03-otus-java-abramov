@@ -21,7 +21,7 @@ public class UserWebSocketController {
     private final NetworkClient client;
     private final SimpMessagingTemplate simp;
     @Value("${db-client-name:db}")
-    private String dbClientName;
+    private final String dbClientName;
 
     @MessageMapping("/get")
     public void getAllUsers(SimpMessageHeaderAccessor headers) {

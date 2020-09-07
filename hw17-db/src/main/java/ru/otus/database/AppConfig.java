@@ -1,5 +1,6 @@
 package ru.otus.database;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,9 +27,10 @@ import javax.persistence.Persistence;
 
 @Configuration
 @EnableAsync
+@RequiredArgsConstructor
 public class AppConfig implements AsyncConfigurer {
     @Value("${network-name:db}")
-    private String clientName;
+    private final String clientName;
 
     @Override
     @Bean

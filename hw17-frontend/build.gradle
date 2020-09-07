@@ -4,6 +4,7 @@ plugins {
 }
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+generateLombokConfig.enabled = false
 
 group 'ru.otus'
 version 'unspecified'

@@ -1,5 +1,6 @@
 package ru.otus.frontend.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,9 +23,10 @@ import java.util.Arrays;
 @Configuration
 @EnableAsync
 @ComponentScan("ru.otus.frontend")
+@RequiredArgsConstructor
 public class AppConfig implements AsyncConfigurer {
     @Value("${network-name:front}")
-    private String clientName;
+    private final String clientName;
 
     @Override
     @Bean
