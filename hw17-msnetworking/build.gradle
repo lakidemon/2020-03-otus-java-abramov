@@ -1,0 +1,30 @@
+plugins {
+    id 'java-library'
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+group 'ru.otus'
+version 'unspecified'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api project(':messagesystem')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation group: 'org.mockito', name: 'mockito-core'
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'com.google.guava:guava'
+}
+
+test {
+    useJUnitPlatform()
+}

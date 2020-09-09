@@ -1,0 +1,28 @@
+plugins {
+    id 'java-library'
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+generateLombokConfig.enabled = false
+
+group 'ru.otus'
+version 'unspecified'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api project(':messagesystem')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'javax.persistence:javax.persistence-api'
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'com.google.guava:guava'
+}
+
+test {
+    useJUnitPlatform()
+}
